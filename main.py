@@ -36,7 +36,7 @@ def connect_obd():
 
 
     # connect to obd 
-    obd_mac_addr = "XX:XX:XX:XX:XX:XX"
+    obd_mac_addr = "D2:E0:2F:8D:54:A9"
 
     os.system("/bin/bash -c \"bluetoothctl power on\"")
     os.system("/bin/bash -c \"bluetoothctl pairable on\"")
@@ -52,10 +52,30 @@ def connect_obd():
     print(ports)
 
     connection = obd.OBD()
+    print("Connection status: ")
+    print(connection.status())
+
+# Print supported commands
+    commands = connection.supported_commands
+    print("Supported commands: ")
+    for command in commands:
+        print(command.name)
 
     return connection.status()
 
+    # Send a command
+    while True:
+        command = input("Enter command (type 'quit' to exit): ")
+        if (command == "quit"):
+            break
+        try:
+            res = connection.query(obd.commands[command])
+            print(res.value)
+        except Exception as ex:
+            print("Error: " + str(ex))
 
+# Close the connection
+    connection.close()
 
 
 if __name__ == "__main__":
