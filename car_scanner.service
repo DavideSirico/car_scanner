@@ -1,6 +1,7 @@
 [Unit]
 Description=Car Scanner
-After=network.target bluetooth.service
+After=network.target bluetooth.target
+
 
 [Service]
 ExecStart=/usr/bin/python3 /home/david/car_scanner/car_scanner.py

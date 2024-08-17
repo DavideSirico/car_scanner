@@ -15,6 +15,8 @@
 import subprocess
 import os
 import obd
+import time
+import socket
 
 def is_bluetooth_service_running():
     try:
@@ -24,9 +26,6 @@ def is_bluetooth_service_running():
     except subprocess.CalledProcessError:
         # Handle the case where systemctl is not available or service is inactive
         return False
-
-
-
 
 def connect_obd():
     # check if the bluetooth service is running
@@ -42,6 +41,7 @@ def connect_obd():
     os.system("/bin/bash -c \"bluetoothctl pairable on\"")
     os.system("/bin/bash -c \"bluetoothctl agent on\"")
     os.system("/bin/bash -c \"bluetoothctl default-agent\"")
+    # se il pairing e' gia stato effettuato va in loop FIXME
     os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
     os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
     os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
@@ -52,6 +52,7 @@ def connect_obd():
     print(ports)
 
     connection = obd.OBD()
+
     print("Connection status: ")
     print(connection.status())
 
@@ -60,8 +61,6 @@ def connect_obd():
     print("Supported commands: ")
     for command in commands:
         print(command.name)
-
-    return connection.status()
 
     # Send a command
     while True:
@@ -77,6 +76,36 @@ def connect_obd():
 # Close the connection
     connection.close()
 
+def gater_informations(connection):
+    res = connection.query(obd.commands[command])
+
+
+def is_wifi_connected():
+    try:
+        socket.setdefaulttimeout(3)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("192.168.1.100", "53"))
+        return True
+    except socket.error as ex:
+        print(ex)
+        return False
+
+
+def send_data():
+    # send data to 192.168.1.100 with all the data?
+    pass
+
 
 if __name__ == "__main__":
-    connect_obd()
+    connection = connect_obd()
+    """
+    while True:
+        if is_car_on():
+            gather_informations(connection)
+            if is_wifi_connected():
+                send_data()
+            time.sleep(10)
+        else:
+            # shutdown the raspb
+            os.system("shutdown -s")
+    """
+
