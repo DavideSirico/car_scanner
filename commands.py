@@ -7,13 +7,13 @@ def decoder_transmission_actual_gear(messages):
     """ decoder for RPM messages """
     d = messages[0].data # only operate on a single message
     d = d[2:] # chop off mode and PID bytes
-    v = obd.bytes_to_int(d)
+    v = obd.utils.bytes_to_int(d)
     return v
 
 def decoder_engine_fuel_rate(messages):
     d = messages[0].data # only operate on a single message
     d = d[2:] # chop off mode and PID bytes
-    v = obd.bytes_to_int(d)
+    v = obd.utils.bytes_to_int(d)
     return v
 
 def decoder_odometer(messages):
@@ -40,7 +40,7 @@ with open('file-commands.4', 'w') as sys.stdout:
                b"01A4",
                4,
                decoder_transmission_actual_gear,
-               obd.protocols.ALL
+               obd.protocols.ECU.ALL
                )
 
     engine_fuel_rate = obd.OBDCommand("Engine Fuel Rate",
@@ -48,7 +48,7 @@ with open('file-commands.4', 'w') as sys.stdout:
                 b"019D",
                 4,
                 decoder_engine_fuel_rate,
-                obd.protocols.ALL
+                obd.protocols.ECU.ALL
                 )
 
     odometer = obd.OBDCommand("Odometer",
@@ -56,7 +56,7 @@ with open('file-commands.4', 'w') as sys.stdout:
                 b"01A6",
                 4,
                 decoder_odometer,
-                obd.protocols.ALL
+                obd.protocols.ECU.ALL
                 )
 
 
