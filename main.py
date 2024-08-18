@@ -59,8 +59,10 @@ def connect_obd():
 # Print supported commands
     commands = connection.supported_commands
     print("Supported commands: ")
-    for command in commands:
-        print(command.name)
+    with open("file.txt", "w") as f:
+        for command in commands:
+            print(command.name)
+            f.write(command.name)
 
     # Send a command
     while True:
