@@ -19,14 +19,14 @@ def decoder_engine_fuel_rate(messages):
 def decoder_odometer(messages):
     d = messages[0].data # only operate on a single message
     d = d[2:] # chop off mode and PID bytes
-    v = obd.bytes_to_int(d)
+    v = obd.utils.bytes_to_int(d)
     return v
 
 
 with open('file-commands.4', 'w') as sys.stdout:
     obd_mac_addr = "13:E0:2F:8D:54:A9"
     os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
-    
+
     obd.logger.setLevel(obd.logging.DEBUG)
     ports = obd.scan_serial()      # return list of valid USB or RF ports
     print(ports)
@@ -39,19 +39,25 @@ with open('file-commands.4', 'w') as sys.stdout:
                "Transmission Actual Gear",
                b"01A4",
                4,
-               decoder_transmission_actual_gear)
+               decoder_transmission_actual_gear,
+               obd.protocols.ALL
+               )
 
     engine_fuel_rate = obd.OBDCommand("Engine Fuel Rate",
                 "Engine Fuel Rate",
                 b"019D",
                 4,
-                decoder_engine_fuel_rate)
+                decoder_engine_fuel_rate,
+                obd.protocols.ALL
+                )
 
     odometer = obd.OBDCommand("Odometer",
                 "Odometer",
                 b"01A6",
                 4,
-                decoder_odometer)
+                decoder_odometer,
+                obd.protocols.ALL
+                )
 
 
 
