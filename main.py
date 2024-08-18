@@ -27,11 +27,20 @@ def is_bluetooth_service_running():
         # Handle the case where systemctl is not available or service is inactive
         return False
 
+def is_root():
+    if os.geteuid() == 0:
+        return True
+    return False
+
+
 def connect_obd():
     # check if the bluetooth service is running
     if not is_bluetooth_service_running():
+        print("bluetooth")
         return -1 # Error
-    
+    if not is_root():
+        print("root")
+        return -1
 
 
     # connect to obd 
@@ -42,8 +51,9 @@ def connect_obd():
     os.system("/bin/bash -c \"bluetoothctl agent on\"")
     os.system("/bin/bash -c \"bluetoothctl default-agent\"")
     # se il pairing e' gia stato effettuato va in loop FIXME
-    os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
-    os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
+    os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
+    # os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
+    # os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
     os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
 
 
@@ -55,7 +65,7 @@ def connect_obd():
 
     print("Connection status: ")
     print(connection.status())
-
+    # return connection
 # Print supported commands
     commands = connection.supported_commands
     print("Supported commands: ")
@@ -63,7 +73,9 @@ def connect_obd():
         for command in commands:
             print(command.name)
             f.write(command.name)
-
+            f.write("\n")
+    connection.close()
+"""
     # Send a command
     while True:
         command = input("Enter command (type 'quit' to exit): ")
@@ -74,18 +86,31 @@ def connect_obd():
             print(res.value)
         except Exception as ex:
             print("Error: " + str(ex))
+"""
+    # Close the connection
+    
 
-# Close the connection
-    connection.close()
-
-def gater_informations(connection):
+def gather_informations(connection):
     res = connection.query(obd.commands[command])
-
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    res = connection.query(obd.commands[command])
+    """
+    """
 
 def is_wifi_connected():
     try:
         socket.setdefaulttimeout(3)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("192.168.1.100", "53"))
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("192.168.1.128", "53"))
         return True
     except socket.error as ex:
         print(ex)
@@ -96,12 +121,17 @@ def send_data():
     # send data to 192.168.1.100 with all the data?
     pass
 
+def is_car_on(connection):
+    if connection.status() == obd.OBDStatus.CAR_CONNECTED:
+        return True
+    return False
+
 
 if __name__ == "__main__":
     connection = connect_obd()
     """
     while True:
-        if is_car_on():
+        if is_car_on(connection):
             gather_informations(connection)
             if is_wifi_connected():
                 send_data()
@@ -109,5 +139,4 @@ if __name__ == "__main__":
         else:
             # shutdown the raspb
             os.system("shutdown -s")
-    """
-
+"""
