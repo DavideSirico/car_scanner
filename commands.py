@@ -1,6 +1,7 @@
 import obd
 import time
 import sys
+import os
 
 def decoder_transmission_actual_gear(messages):
     """ decoder for RPM messages """
@@ -23,7 +24,9 @@ def decoder_odometer(messages):
 
 
 with open('file-commands.4', 'w') as sys.stdout:
-
+    obd_mac_addr = "13:E0:2F:8D:54:A9"
+    os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
+    
     obd.logger.setLevel(obd.logging.DEBUG)
     ports = obd.scan_serial()      # return list of valid USB or RF ports
     print(ports)
