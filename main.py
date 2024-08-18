@@ -75,6 +75,8 @@ def connect_obd():
             f.write(command.name)
             f.write("\n")
     connection.close()
+    os.system(f"/bin/bash -c \"bluetoothctl disconnect {obd_mac_addr}\"")
+
 """
     # Send a command
     while True:
