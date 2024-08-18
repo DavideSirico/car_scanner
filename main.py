@@ -44,15 +44,18 @@ def connect_obd():
 
 
     # connect to obd 
-    obd_mac_addr = "D2:E0:2F:8D:54:A9"
+    # IOS
+    # obd_mac_addr = "D2:E0:2F:8D:54:A9"
+    # Android
+    obd_mac_addr = "13:E0:2F:8D:54:A9"
 
     os.system("/bin/bash -c \"bluetoothctl power on\"")
     os.system("/bin/bash -c \"bluetoothctl pairable on\"")
     os.system("/bin/bash -c \"bluetoothctl agent on\"")
     os.system("/bin/bash -c \"bluetoothctl default-agent\"")
     # se il pairing e' gia stato effettuato va in loop FIXME
-#    os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
-     os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
+    # os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
+    os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
     # os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
     os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
 
@@ -65,7 +68,7 @@ def connect_obd():
 
     print("Connection status: ")
     print(connection.status())
-    # return connection
+    return connection
 # Print supported commands
     commands = connection.supported_commands
     print("Supported commands: ")
@@ -93,22 +96,28 @@ def connect_obd():
     
 
 def gather_informations(connection):
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    res = connection.query(obd.commands[command])
-    """
-    """
+    # mode 1
+    engine_load = connection.query(obd.commands.ENGINE_LOAD, force=True)
+    coolant_temp = connection.query(obd.commands.COOLANT_TEMP, force=True)
+    fuel_pressure = connection.query(obd.commands.FUEL_PRESSURE, force=True)
+    intake_pressure = connection.query(obd.commands.INTAKE_PRESSURE, force=True)
+    rpm = connection.query(obd.commands.RPM, force=True)
+    speed = connection.query(obd.commands.SPEED, force=True)
+    intake_temp = connection.query(obd.commands.INTAKE_TEMP, force=True)
+    maf = connection.query(obd.commands.MAF, force=True)
+    throttle_pos = connection.query(obd.commands.THROTTLE_POS, force=True)
+    engine_run_time = connection.query(obd.commands.RUN_TIME, force=True)
+    fuel_level = connection.query(obd.commands.FUEL_LEVEL, force=True)
+    catalyst_temp_0_0 = connection.query(obd.commands.CATALYST_TEMP_B1S1, force=True)
+    catalyst_temp_0_1 = connection.query(obd.commands.CATALYST_TEMP_B2S1, force=True)
+    catalyst_temp_1_0 = connection.query(obd.commands.CATALYST_TEMP_B1S2, force=True)
+    catalyst_temp_1_1 = connection.query(obd.commands.CATALYST_TEMP_B2S2, force=True)
+    relative_throttle_pos = connection.query(obd.commands.RELATIVE_THROTTLE_POS, force=True)
+    ambient_air_temp = connection.query(obd.commands.AMBIANT_AIR_TEMP, force=True)
+    relative_accel_pos = connection.query(obd.commands.RELATIVE_ACCEL_POS, force=True)
+    fuel_rate = connection.query(obd.commands.FUEL_RATE, force=True)
 
+    
 def is_wifi_connected():
     try:
         socket.setdefaulttimeout(3)
