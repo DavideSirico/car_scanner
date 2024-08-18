@@ -2,7 +2,7 @@ import obd
 import time
 import sys
 
-with open('file-commands.2', 'w') as sys.stdout:
+with open('file-commands.3', 'w') as sys.stdout:
 
     obd.logger.setLevel(obd.logging.DEBUG)
     ports = obd.scan_serial()      # return list of valid USB or RF ports
@@ -13,7 +13,7 @@ with open('file-commands.2', 'w') as sys.stdout:
     print("Connection status: ")
     print(connection.status())
 
-
+"""
     # mode 01
     print("mode 01")
     for i in range(0,95):
@@ -51,9 +51,7 @@ with open('file-commands.2', 'w') as sys.stdout:
         res = connection.query(current_command, force=True)
         print(i)
         print(res.value)
-
-
-    # mode 07
+"""
     print("mode 07")
     current_command = obd.commands[7][0]
     res = connection.query(current_command, force=True)

@@ -51,8 +51,8 @@ def connect_obd():
     os.system("/bin/bash -c \"bluetoothctl agent on\"")
     os.system("/bin/bash -c \"bluetoothctl default-agent\"")
     # se il pairing e' gia stato effettuato va in loop FIXME
-    os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
-    # os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
+#    os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
+     os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
     # os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
     os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
 
