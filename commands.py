@@ -21,7 +21,6 @@ with open('file-commands.2', 'w') as sys.stdout:
         res = connection.query(current_command, force=True)
         print(i)
         print(res.value)
-        time.sleep(1)
 
     # mode 02
     print("mode 02")
@@ -30,7 +29,6 @@ with open('file-commands.2', 'w') as sys.stdout:
         res = connection.query(current_command, force=True)
         print(i)
         print(res.value)
-        time.sleep(1)
 
     # mode 03
     print("mode 03")
@@ -53,7 +51,6 @@ with open('file-commands.2', 'w') as sys.stdout:
         res = connection.query(current_command, force=True)
         print(i)
         print(res.value)
-        time.sleep(1)
 
 
     # mode 07
@@ -69,4 +66,3 @@ with open('file-commands.2', 'w') as sys.stdout:
         res = connection.query(current_command, force=True)
         print(i)
         print(res.value)
-        time.sleep(1)
