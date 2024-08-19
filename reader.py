@@ -98,12 +98,7 @@ def gather_informations(obd_connection, sql_connection):
 
         print("saving data")
 
-        sql_connection.execute("INSERT INTO obd_data ( \
-                            timestamp \
-                            engine_load, coolant_temp, fuel_pressure, intake_pressure, rpm, speed, intake_temp, maf, throttle_pos, engine_run_time, fuel_level, \
-                            catalyst_temp_0_0, catalyst_temp_0_1, catalyst_temp_1_0, catalyst_temp_1_1, relative_throttle_pos, ambient_air_temp, relative_accel_pos, fuel_rate \
-                            ) VALUES (datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (engine_load, coolant_temp, fuel_pressure, intake_pressure, rpm, speed, intake_temp, maf, throttle_pos, engine_run_time, fuel_level, \
-                            catalyst_temp_0_0, catalyst_temp_0_1, catalyst_temp_1_0, catalyst_temp_1_1, relative_throttle_pos, ambient_air_temp, relative_accel_pos, fuel_rate))
+        sql_connection.execute("INSERT INTO obd_data (timestamp, engine_load, coolant_temp, fuel_pressure, intake_pressure, rpm, speed, intake_temp, maf, throttle_pos, engine_run_time, fuel_level, catalyst_temp_0_0, catalyst_temp_0_1, catalyst_temp_1_0, catalyst_temp_1_1, relative_throttle_pos, ambient_air_temp, relative_accel_pos, fuel_rate) VALUES (datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (engine_load, coolant_temp, fuel_pressure, intake_pressure, rpm, speed, intake_temp, maf, throttle_pos, engine_run_time, fuel_level, catalyst_temp_0_0, catalyst_temp_0_1, catalyst_temp_1_0, catalyst_temp_1_1, relative_throttle_pos, ambient_air_temp, relative_accel_pos, fuel_rate))
         sql_connection.commit()
         print("\n------------------\n")
         time.sleep(10)
@@ -131,6 +126,17 @@ def wait_for_obd_connection():
     while connection is None or not connection.is_connected():
         try:
             print("connecting...")
+            obd_mac_addr = "13:E0:2F:8D:54:A9"
+
+            os.system("/bin/bash -c \"bluetoothctl power on\"")
+            os.system("/bin/bash -c \"bluetoothctl pairable on\"")
+            os.system("/bin/bash -c \"bluetoothctl agent on\"")
+            os.system("/bin/bash -c \"bluetoothctl default-agent\"")
+            # se il pairing e' gia stato effettuato va in loop FIXME
+            # os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
+            os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
+            # os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
+            os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
             connection = obd.OBD()  # Auto-connect to USB or Bluetooth OBD-II adapter
         except Exception as e:
             print(f"Connection error: {e}")
