@@ -44,8 +44,8 @@ def connect_obd():
     # Android
     obd_mac_addr = "13:E0:2F:8D:54:A9"
 
-    os.system("/bin/bash -c \"bluetoothctl power on\"")
-    os.system("/bin/bash -c \"bluetoothctl pairable on\"")
+ #   os.system("/bin/bash -c \"bluetoothctl power on\"")
+ #   os.system("/bin/bash -c \"bluetoothctl pairable on\"")
     os.system("/bin/bash -c \"bluetoothctl agent on\"")
     os.system("/bin/bash -c \"bluetoothctl default-agent\"")
     # se il pairing e' gia stato effettuato va in loop FIXME
@@ -128,15 +128,16 @@ def wait_for_obd_connection():
             print("connecting...")
             obd_mac_addr = "13:E0:2F:8D:54:A9"
 
-            os.system("/bin/bash -c \"bluetoothctl power on\"")
-            os.system("/bin/bash -c \"bluetoothctl pairable on\"")
-            os.system("/bin/bash -c \"bluetoothctl agent on\"")
-            os.system("/bin/bash -c \"bluetoothctl default-agent\"")
+            #os.system("/bin/bash -c \"bluetoothctl power on\"")
+            #os.system("/bin/bash -c \"bluetoothctl pairable on\"")
+            #os.system("/bin/bash -c \"bluetoothctl agent on\"")
+            #os.system("/bin/bash -c \"bluetoothctl default-agent\"")
             # se il pairing e' gia stato effettuato va in loop FIXME
             # os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
-            os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
+            #os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
             # os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
-            os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
+            #os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
+            obd.logger.setLevel(obd.logging.DEBUG)
             connection = obd.OBD()  # Auto-connect to USB or Bluetooth OBD-II adapter
         except Exception as e:
             print(f"Connection error: {e}")
