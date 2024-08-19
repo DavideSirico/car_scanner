@@ -2,9 +2,8 @@
 Description=Car Scanner
 After=network.target bluetooth.target
 
-
 [Service]
-ExecStart=/usr/bin/python3 /home/david/car_scanner/car_scanner.py
+ExecStart=/usr/bin/bash /home/david/car_scanner/car_scanner.sh
 Type=simple
 Restart=always
 WorkingDirectory=/home/david/car_scanner
