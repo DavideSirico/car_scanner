@@ -125,6 +125,7 @@ def wait_for_obd_connection():
     connection = None
     while connection is None or not connection.is_connected():
         try:
+            # TODO check if it is aldready connected
             print("connecting...")
             obd_mac_addr = "13:E0:2F:8D:54:A9"
 
@@ -136,6 +137,7 @@ def wait_for_obd_connection():
             # os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
             os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
             # os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
+            # TODO check
             os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
             connection = obd.OBD()  # Auto-connect to USB or Bluetooth OBD-II adapter
         except Exception as e:
