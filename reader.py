@@ -78,23 +78,60 @@ def gather_informations(obd_connection, sql_connection):
             break
         print("getting car data...")
         engine_load = obd_connection.query(obd.commands.ENGINE_LOAD, force=True)
+        if engine_load.is_null():
+            engine_load.value = -1
         coolant_temp = obd_connection.query(obd.commands.COOLANT_TEMP, force=True)
+        if coolant_temp.is_null():
+            coolant_temp.value = -1
+
         fuel_pressure = obd_connection.query(obd.commands.FUEL_PRESSURE, force=True)
+        if fuel_pressure.is_null():
+            fuel_pressure.value = -1
         intake_pressure = obd_connection.query(obd.commands.INTAKE_PRESSURE, force=True)
+        if intake_pressure.is_null():
+            intake_pressure.value = -1
         speed = obd_connection.query(obd.commands.SPEED, force=True)
+        if speed.is_null():
+            speed.value = -1
         intake_temp = obd_connection.query(obd.commands.INTAKE_TEMP, force=True)
+        if intake_temp.is_null():
+            intake_temp.value = -1
         maf = obd_connection.query(obd.commands.MAF, force=True)
+        if maf.is_null():
+            maf.value = -1
         throttle_pos = obd_connection.query(obd.commands.THROTTLE_POS, force=True)
+        if throttle_pos.is_null():
+            throttle_pos.value = -1
         engine_run_time = obd_connection.query(obd.commands.RUN_TIME, force=True)
+        if engine_run_time.is_null():
+            engine_run_time.value = -1
         fuel_level = obd_connection.query(obd.commands.FUEL_LEVEL, force=True)
+        if fuel_level.is_null():
+            fuel_level.value = -1
         catalyst_temp_0_0 = obd_connection.query(obd.commands.CATALYST_TEMP_B1S1, force=True)
+        if catalyst_temp_0_0.is_null():
+            catalyst_temp_0_0.value = -1
         catalyst_temp_0_1 = obd_connection.query(obd.commands.CATALYST_TEMP_B2S1, force=True)
+        if catalyst_temp_0_1.is_null():
+            catalyst_temp_0_1.value = -1
         catalyst_temp_1_0 = obd_connection.query(obd.commands.CATALYST_TEMP_B1S2, force=True)
+        if catalyst_temp_1_0.is_null():
+            catalyst_temp_1_0.value = -1
         catalyst_temp_1_1 = obd_connection.query(obd.commands.CATALYST_TEMP_B2S2, force=True)
+        if catalyst_temp_1_1.is_null():
+            catalyst_temp_1_1.value = -1
         relative_throttle_pos = obd_connection.query(obd.commands.RELATIVE_THROTTLE_POS, force=True)
+        if relative_throttle_pos.is_null():
+            relative_throttle_pos.value = -1
         ambient_air_temp = obd_connection.query(obd.commands.AMBIANT_AIR_TEMP, force=True)
+        if ambient_air_temp.is_null():
+            ambient_air_temp.value = -1
         relative_accel_pos = obd_connection.query(obd.commands.RELATIVE_ACCEL_POS, force=True)
+        if relative_accel_pos.is_null():
+            relative_accel_pos.value = -1
         fuel_rate = obd_connection.query(obd.commands.FUEL_RATE, force=True)
+        if fuel_rate.is_null():
+            fuel_rate.value = -1
 
         print("saving data")
 
@@ -125,6 +162,7 @@ def wait_for_obd_connection():
     connection = None
     while connection is None or not connection.is_connected():
         try:
+            # TODO check if it is aldready connected
             print("connecting...")
             obd_mac_addr = "13:E0:2F:8D:54:A9"
 
@@ -136,8 +174,13 @@ def wait_for_obd_connection():
             # os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
             #os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
             # os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
+<<<<<<< HEAD
             #os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
             obd.logger.setLevel(obd.logging.DEBUG)
+=======
+            # TODO check
+            os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
+>>>>>>> b22f75b929c29cfae721793a295aab03b9d84d24
             connection = obd.OBD()  # Auto-connect to USB or Bluetooth OBD-II adapter
         except Exception as e:
             print(f"Connection error: {e}")
