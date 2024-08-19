@@ -23,7 +23,7 @@ def decoder_odometer(messages):
     return v
 
 
-with open('file-commands.4', 'w') as sys.stdout:
+with open('supported', 'w') as sys.stdout:
     obd_mac_addr = "13:E0:2F:8D:54:A9"
     os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
 
@@ -35,6 +35,7 @@ with open('file-commands.4', 'w') as sys.stdout:
 
     print("Connection status: ")
     print(connection.status())
+    """
     transmission_actual_gear = obd.OBDCommand("Transmission Actual Gear",
                "Transmission Actual Gear",
                b"01A4",
@@ -72,3 +73,23 @@ with open('file-commands.4', 'w') as sys.stdout:
     res = connection.query(odometer, force=True)
     print("odometer")
     print(res.value)
+"""
+    res = connection.query(obd.commands.PIDS_A, force=True)
+    print("supported pids")
+    print("message:", end=" ") 
+    print(res.messages)
+    print("value:", end=" ")
+    print(res.value)
+    res = connection.query(obd.commands.PIDS_B, force=True)
+    print("supported pids")
+    print("message:", end=" ") 
+    print(res.messages)
+    print("value:", end=" ")
+    print(res.value)
+    res = connection.query(obd.commands.PIDS_C, force=True)
+    print("supported pids")
+    print("message:", end=" ") 
+    print(res.messages)
+    print("value:", end=" ")
+    print(res.value)
+    
