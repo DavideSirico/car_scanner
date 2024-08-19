@@ -8,12 +8,28 @@
 
 
 # 1. collegamento all'obd
-import subprocess
 import os
 import obd
 import time
 import socket
 import sqlite3
+import subprocess
+
+def check_rfcomm_bind():
+    try:
+        # Running the rfcomm show command
+        output = subprocess.check_output(["rfcomm"], text=True)
+        
+        # Checking if hci0 is mentioned in the output
+        if "13:E0:2F:8D:54:A9" in output:
+            print("RFCOMM bind to hci0 found.")
+            return True
+        else:
+            print("No RFCOMM bind to hci0 found.")
+            return False
+    except subprocess.CalledProcessError as e:
+        print(f"Error checking RFCOMM: {e}")
+        return False
 
 def is_bluetooth_service_running():
     try:
@@ -154,6 +170,21 @@ def connect_sql():
                            catalyst_temp_0_0 REAL, catalyst_temp_0_1 REAL, catalyst_temp_1_0 REAL, catalyst_temp_1_1 REAL, relative_throttle_pos REAL, ambient_air_temp REAL, relative_accel_pos, fuel_rate)''')
     return conn
 
+def is_device_connected(mac_address):
+    try:
+        # Run the hcitool con command to list all connected devices
+        output = subprocess.check_output(["hcitool", "con"], text=True)
+        
+        # Check if the MAC address is in the output
+        if mac_address in output:
+            print(f"Device {mac_address} is connected.")
+            return True
+        else:
+            print(f"Device {mac_address} is not connected.")
+            return False
+    except subprocess.CalledProcessError as e:
+        print(f"Error checking Bluetooth connections: {e}")
+        return False
 
 def wait_for_obd_connection():
     print("Waiting for OBD-II connection...")
@@ -165,22 +196,20 @@ def wait_for_obd_connection():
             # TODO check if it is aldready connected
             print("connecting...")
             obd_mac_addr = "13:E0:2F:8D:54:A9"
+            if not is_device_connected(obd_mac_addr):
+                os.system("/bin/bash -c \"bluetoothctl power on\"")
+                os.system("/bin/bash -c \"bluetoothctl pairable on\"")
+                os.system("/bin/bash -c \"bluetoothctl agent on\"")
+                os.system("/bin/bash -c \"bluetoothctl default-agent\"")
+                # se il pairing e' gia stato effettuato va in loop FIXME
+                os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
+                os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
+                os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
 
-            #os.system("/bin/bash -c \"bluetoothctl power on\"")
-            #os.system("/bin/bash -c \"bluetoothctl pairable on\"")
-            #os.system("/bin/bash -c \"bluetoothctl agent on\"")
-            #os.system("/bin/bash -c \"bluetoothctl default-agent\"")
-            # se il pairing e' gia stato effettuato va in loop FIXME
-            # os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
-            #os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
-            # os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
-<<<<<<< HEAD
-            #os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
+            if not check_rfcomm_bind():
+                os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
+
             obd.logger.setLevel(obd.logging.DEBUG)
-=======
-            # TODO check
-            os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
->>>>>>> b22f75b929c29cfae721793a295aab03b9d84d24
             connection = obd.OBD()  # Auto-connect to USB or Bluetooth OBD-II adapter
         except Exception as e:
             print(f"Connection error: {e}")
