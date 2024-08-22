@@ -39,6 +39,6 @@ install the required python package
 pip install -r requirements.txt
 
 create a systemlink for the service 
-sudo ln -s /home/david/car_scanner.service /etc/systemd/system/
+sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
 
 change the variable in the sender.py and reader.py files

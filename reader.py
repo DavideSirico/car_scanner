@@ -129,6 +129,7 @@ def connect_sql():
     query = " REAL, ".join(x for x in SENSORS)
     query = query + " REAL)"
     query = "CREATE TABLE IF NOT EXISTS obd_data (timestamp TEXT, " + query
+    print("creating table...")
     c.execute(query)
     return conn
 
