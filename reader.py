@@ -14,6 +14,10 @@ import time
 import socket
 import sqlite3
 import subprocess
+import json 
+
+SENSORS = ["ENGINE_LOAD", "COOLANT_TEMP", "FUEL_PRESSURE", "INTAKE_PRESSURE", "SPEED", "INTAKE_TEMP", "MAF", "THROTTLE_POS", "RUN_TIME", "FUEL_LEVEL", "CATALYST_TEMP_B1S1", "CATALYST_TEMP_B2S1", "CATALYST_TEMP_B1S2", "CATALYST_TEMP_B2S2", "RELATIVE_THROTTLE_POS", "AMBIANT_AIR_TEMP", "RELATIVE_ACCEL_POS", "FUEL_RATE"]
+MAC_ADDR = "13:E0:2F:8D:54:A9"
 
 def check_rfcomm_bind():
     try:
@@ -21,7 +25,7 @@ def check_rfcomm_bind():
         output = subprocess.check_output(["rfcomm"], text=True)
         
         # Checking if hci0 is mentioned in the output
-        if "13:E0:2F:8D:54:A9" in output:
+        if MAC_ADDR in output:
             print("RFCOMM bind to hci0 found.")
             return True
         else:
@@ -58,17 +62,16 @@ def connect_obd():
     # IOS
     # obd_mac_addr = "D2:E0:2F:8D:54:A9"
     # Android
-    obd_mac_addr = "13:E0:2F:8D:54:A9"
 
  #   os.system("/bin/bash -c \"bluetoothctl power on\"")
  #   os.system("/bin/bash -c \"bluetoothctl pairable on\"")
     os.system("/bin/bash -c \"bluetoothctl agent on\"")
     os.system("/bin/bash -c \"bluetoothctl default-agent\"")
     # se il pairing e' gia stato effettuato va in loop FIXME
-    # os.system(f"/bin/bash -c \"bluetoothctl connect {obd_mac_addr}\"")
-    os.system(f"/bin/bash -c \"bluetoothctl pair {obd_mac_addr}\"")
-    # os.system(f"/bin/bash -c \"bluetoothctl trust {obd_mac_addr}\"")
-    os.system(f"/bin/bash -c \"rfcomm bind hci0 {obd_mac_addr}\"")
+    # os.system(f"/bin/bash -c \"bluetoothctl connect {MAC_ADDR}\"")
+    os.system(f"/bin/bash -c \"bluetoothctl pair {MAC_ADDR}\"")
+    # os.system(f"/bin/bash -c \"bluetoothctl trust {MAC_ADDR}\"")
+    os.system(f"/bin/bash -c \"rfcomm bind hci0 {MAC_ADDR}\"")
 
 
     obd.logger.setLevel(obd.logging.DEBUG)
@@ -93,68 +96,23 @@ def gather_informations(obd_connection, sql_connection):
             print("car is off")
             break
         print("getting car data...")
-        engine_load = obd_connection.query(obd.commands.ENGINE_LOAD, force=True)
-        if engine_load.is_null():
-            engine_load.value = -1
-        coolant_temp = obd_connection.query(obd.commands.COOLANT_TEMP, force=True)
-        if coolant_temp.is_null():
-            coolant_temp.value = -1
+        
+        sensor_data = []
 
-        fuel_pressure = obd_connection.query(obd.commands.FUEL_PRESSURE, force=True)
-        if fuel_pressure.is_null():
-            fuel_pressure.value = -1
-        intake_pressure = obd_connection.query(obd.commands.INTAKE_PRESSURE, force=True)
-        if intake_pressure.is_null():
-            intake_pressure.value = -1
-        speed = obd_connection.query(obd.commands.SPEED, force=True)
-        if speed.is_null():
-            speed.value = -1
-        intake_temp = obd_connection.query(obd.commands.INTAKE_TEMP, force=True)
-        if intake_temp.is_null():
-            intake_temp.value = -1
-        maf = obd_connection.query(obd.commands.MAF, force=True)
-        if maf.is_null():
-            maf.value = -1
-        throttle_pos = obd_connection.query(obd.commands.THROTTLE_POS, force=True)
-        if throttle_pos.is_null():
-            throttle_pos.value = -1
-        engine_run_time = obd_connection.query(obd.commands.RUN_TIME, force=True)
-        if engine_run_time.is_null():
-            engine_run_time.value = -1
-        fuel_level = obd_connection.query(obd.commands.FUEL_LEVEL, force=True)
-        if fuel_level.is_null():
-            fuel_level.value = -1
-        catalyst_temp_0_0 = obd_connection.query(obd.commands.CATALYST_TEMP_B1S1, force=True)
-        if catalyst_temp_0_0.is_null():
-            catalyst_temp_0_0.value = -1
-        catalyst_temp_0_1 = obd_connection.query(obd.commands.CATALYST_TEMP_B2S1, force=True)
-        if catalyst_temp_0_1.is_null():
-            catalyst_temp_0_1.value = -1
-        catalyst_temp_1_0 = obd_connection.query(obd.commands.CATALYST_TEMP_B1S2, force=True)
-        if catalyst_temp_1_0.is_null():
-            catalyst_temp_1_0.value = -1
-        catalyst_temp_1_1 = obd_connection.query(obd.commands.CATALYST_TEMP_B2S2, force=True)
-        if catalyst_temp_1_1.is_null():
-            catalyst_temp_1_1.value = -1
-        relative_throttle_pos = obd_connection.query(obd.commands.RELATIVE_THROTTLE_POS, force=True)
-        if relative_throttle_pos.is_null():
-            relative_throttle_pos.value = -1
-        ambient_air_temp = obd_connection.query(obd.commands.AMBIANT_AIR_TEMP, force=True)
-        if ambient_air_temp.is_null():
-            ambient_air_temp.value = -1
-        relative_accel_pos = obd_connection.query(obd.commands.RELATIVE_ACCEL_POS, force=True)
-        if relative_accel_pos.is_null():
-            relative_accel_pos.value = -1
-        fuel_rate = obd_connection.query(obd.commands.FUEL_RATE, force=True)
-        if fuel_rate.is_null():
-            fuel_rate.value = -1
+        for sensor in SENSORS:
+            print(f"reading {sensor}:")
+            res = obd_connection.query(getattr(obd.commands, sensor))
+            print(res.value.magnitude)
+            sensor_data.append(res.value.magnitude)
 
         print("saving data")
-
-        sql_connection.execute("INSERT INTO obd_data (timestamp, engine_load, coolant_temp, fuel_pressure, intake_pressure, rpm, speed, intake_temp, maf, throttle_pos, engine_run_time, fuel_level, catalyst_temp_0_0, catalyst_temp_0_1, catalyst_temp_1_0, catalyst_temp_1_1, relative_throttle_pos, ambient_air_temp, relative_accel_pos, fuel_rate) VALUES (datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (engine_load.value, coolant_temp.value, fuel_pressure.value, intake_pressure.value, rpm.value, speed.value, intake_temp.value, maf.value, throttle_pos.value, engine_run_time.value, fuel_level.value, catalyst_temp_0_0.value, catalyst_temp_0_1.value, catalyst_temp_1_0.value, catalyst_temp_1_1.value, relative_throttle_pos.value, ambient_air_temp.value, relative_accel_pos.value, fuel_rate))
+        sql_connection.execute("INSERT INTO obd_data " + json.dumps(sensor_data) + ";"
+        # sql_connection.execute("INSERT INTO obd_data (timestamp, engine_load, coolant_temp, fuel_pressure, intake_pressure, rpm, speed, intake_temp, maf, throttle_pos, engine_run_time, fuel_level, catalyst_temp_0_0, catalyst_temp_0_1, catalyst_temp_1_0, catalyst_temp_1_1, relative_throttle_pos, ambient_air_temp, relative_accel_pos, fuel_rate) VALUES (datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (engine_load.value.magnitude, coolant_temp.value.magnitude, fuel_pressure.value.magnitude, intake_pressure.value.magnitude, rpm.value.magnitude, speed.value.magnitude, intake_temp.value.magnitude, maf.value.magnitude, throttle_pos.value.magnitude, engine_run_time.value.magnitude, fuel_level.value.magnitude, catalyst_temp_0_0.value.magnitude, catalyst_temp_0_1.value.magnitude, catalyst_temp_1_0.value.magnitude, catalyst_temp_1_1.value.magnitude, relative_throttle_pos.value.magnitude, ambient_air_temp.value.magnitude, relative_accel_pos.value.magnitude, fuel_rate.value.magnitude))
         sql_connection.commit()
         print("\n------------------\n")
-        time.sleep(10)
+        for i in range(0,10):
+            print("sleeping...")
+            time.sleep(1)
 
 
 def is_car_on(connection):
@@ -166,15 +124,17 @@ def connect_sql():
     print("connecting to sql...")
     conn = sqlite3.connect('obd_data.db')
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS obd_data (timestamp TEXT, engine_load REAL, coolant_temp REAL, fuel_pressure REAL, intake_pressure REAL, rpm REAL, speed REAL, intake_temp REAL, maf REAL, throttle_pos REAL, engine_run_time REAL, fuel_level REAL, \
-                           catalyst_temp_0_0 REAL, catalyst_temp_0_1 REAL, catalyst_temp_1_0 REAL, catalyst_temp_1_1 REAL, relative_throttle_pos REAL, ambient_air_temp REAL, relative_accel_pos, fuel_rate)''')
+    query = " REAL, ".join(x for x in SENSORS)
+    query = query + " REAL)"
+    query = "CREATE TABLE IF NOT EXISTS obd_data (timestamp TEXT, " + query
+    c.execute(query)
     return conn
 
 def is_device_connected(mac_address):
     try:
         # Run the hcitool con command to list all connected devices
         output = subprocess.check_output(["hcitool", "con"], text=True)
-        
+        print(output)
         # Check if the MAC address is in the output
         if mac_address in output:
             print(f"Device {mac_address} is connected.")
@@ -193,9 +153,9 @@ def wait_for_obd_connection():
     connection = None
     while connection is None or not connection.is_connected():
         try:
-            # TODO check if it is aldready connected
             print("connecting...")
             obd_mac_addr = "13:E0:2F:8D:54:A9"
+            # TODO non va
             if not is_device_connected(obd_mac_addr):
                 os.system("/bin/bash -c \"bluetoothctl power on\"")
                 os.system("/bin/bash -c \"bluetoothctl pairable on\"")
