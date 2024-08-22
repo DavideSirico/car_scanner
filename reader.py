@@ -164,9 +164,9 @@ def wait_for_obd_connection():
 
 
 if __name__ == "__main__":
-    sys.stderr = open("stderr.log", "a")
-    sys.stdout = open("stdout.log", "a")
-    logging.basicConfig(filename='test.log', format='%(asctime)s: %(message)s',
+    sys.stderr = open("stderr_reader.log", "a")
+    sys.stdout = open("stdout_reader.log", "a")
+    logging.basicConfig(filename='01_reader.log', format='%(asctime)s: %(message)s',
                     level=logging.DEBUG)
     obd_connection = wait_for_obd_connection()
     logging.info("CONNECTION WITH OBD SUCCESSFUL")
