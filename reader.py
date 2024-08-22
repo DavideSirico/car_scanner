@@ -16,8 +16,14 @@ import sqlite3
 import subprocess
 import json 
 
-SENSORS = ["ENGINE_LOAD", "COOLANT_TEMP", "FUEL_PRESSURE", "INTAKE_PRESSURE", "SPEED", "INTAKE_TEMP", "MAF", "THROTTLE_POS", "RUN_TIME", "FUEL_LEVEL", "CATALYST_TEMP_B1S1", "CATALYST_TEMP_B2S1", "CATALYST_TEMP_B1S2", "CATALYST_TEMP_B2S2", "RELATIVE_THROTTLE_POS", "AMBIANT_AIR_TEMP", "RELATIVE_ACCEL_POS", "FUEL_RATE"]
+SENSORS = ["ENGINE_LOAD", "COOLANT_TEMP", "FUEL_PRESSURE", "INTAKE_PRESSURE", "SPEED",
+            "INTAKE_TEMP", "MAF", "THROTTLE_POS", "RUN_TIME", "FUEL_LEVEL",
+            "CATALYST_TEMP_B1S1", "CATALYST_TEMP_B2S1", "CATALYST_TEMP_B1S2",
+            "CATALYST_TEMP_B2S2", "RELATIVE_THROTTLE_POS", "AMBIANT_AIR_TEMP",
+            "RELATIVE_ACCEL_POS", "FUEL_RATE"]
+
 MAC_ADDR = "13:E0:2F:8D:54:A9"
+# IOS obd_mac_addr = "D2:E0:2F:8D:54:A9"
 
 def check_rfcomm_bind():
     try:
@@ -58,13 +64,9 @@ def connect_obd():
     if not is_root():
         print("root")
         return -1
-    
-    # IOS
-    # obd_mac_addr = "D2:E0:2F:8D:54:A9"
-    # Android
 
- #   os.system("/bin/bash -c \"bluetoothctl power on\"")
- #   os.system("/bin/bash -c \"bluetoothctl pairable on\"")
+    os.system("/bin/bash -c \"bluetoothctl power on\"")
+    os.system("/bin/bash -c \"bluetoothctl pairable on\"")
     os.system("/bin/bash -c \"bluetoothctl agent on\"")
     os.system("/bin/bash -c \"bluetoothctl default-agent\"")
     # se il pairing e' gia stato effettuato va in loop FIXME
@@ -106,7 +108,7 @@ def gather_informations(obd_connection, sql_connection):
             sensor_data.append(res.value.magnitude)
 
         print("saving data")
-        sql_connection.execute("INSERT INTO obd_data " + json.dumps(sensor_data) + ";"
+        sql_connection.execute("INSERT INTO obd_data " + json.dumps(sensor_data) + ";")
         # sql_connection.execute("INSERT INTO obd_data (timestamp, engine_load, coolant_temp, fuel_pressure, intake_pressure, rpm, speed, intake_temp, maf, throttle_pos, engine_run_time, fuel_level, catalyst_temp_0_0, catalyst_temp_0_1, catalyst_temp_1_0, catalyst_temp_1_1, relative_throttle_pos, ambient_air_temp, relative_accel_pos, fuel_rate) VALUES (datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (engine_load.value.magnitude, coolant_temp.value.magnitude, fuel_pressure.value.magnitude, intake_pressure.value.magnitude, rpm.value.magnitude, speed.value.magnitude, intake_temp.value.magnitude, maf.value.magnitude, throttle_pos.value.magnitude, engine_run_time.value.magnitude, fuel_level.value.magnitude, catalyst_temp_0_0.value.magnitude, catalyst_temp_0_1.value.magnitude, catalyst_temp_1_0.value.magnitude, catalyst_temp_1_1.value.magnitude, relative_throttle_pos.value.magnitude, ambient_air_temp.value.magnitude, relative_accel_pos.value.magnitude, fuel_rate.value.magnitude))
         sql_connection.commit()
         print("\n------------------\n")
@@ -196,8 +198,8 @@ if __name__ == "__main__":
     obd_connection = wait_for_obd_connection()
     sql_connection = connect_sql()
     gather_informations(obd_connection, sql_connection)
-    time.sleep(30)
     print("shutting down...")
+    time.sleep(30)
     os.system("shutdown -h now")
 
         
