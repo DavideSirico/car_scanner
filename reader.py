@@ -58,14 +58,14 @@ def gather_informations(obd_connection, sql_connection):
             logging.info("car is off")
             break
 
-        logging.debug("RPM value: " + rpm.value)
+        logging.debug("RPM value: %s", rpm.value)
         logging.info("getting car data...")
         
         sensor_data = []
 
         for sensor in SENSORS:
             logging.debug(f"reading {sensor}:")
-            res = obd_connection.query(getattr(obd.commands, sensor))
+            res = obd_connection.query(getattr(obd.commands, sensor), force=True)
             if res.value is not None: 
                 logging.debug(res.value.magnitude)
                 sensor_data.append(res.value.magnitude)
@@ -85,10 +85,10 @@ def gather_informations(obd_connection, sql_connection):
 
 def connect_sql():
     logging.info("connecting to SQL...")
-    conn = sqlite3.connect('obd_data.db')
+    conn = sqlite3.connect('/home/david/car_scanner/obd_data.db')
     c = conn.cursor()
     query = " REAL, ".join(x for x in SENSORS) + " REAL)"
-    query = "CREATE TABLE IF NOT EXISTS obd_data (timestamp TEXT, " + query
+    query = "CREATE TABLE IF NOT EXISTS obd_data (timestamp DATE DEFAULT (datetime('now','localtime')), " + query
     logging.debug("creating table...")
     c.execute(query)
     return conn
@@ -175,7 +175,7 @@ if __name__ == "__main__":
     gather_informations(obd_connection, sql_connection)
 
     logging.info("SHUTTING DOWN IN 30 SECONDS...")
-    obd.connection.close()
+    obd_connection.close()
     sql_connection.close()
     os.system("systemctl disable car_service.service")
     time.sleep(30)

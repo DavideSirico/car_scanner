@@ -4,6 +4,7 @@ import socket
 import os
 import subprocess
 import logging
+import sys
 
 def is_wifi_connected():
     logging.debug("sending a packet to 192.168.1.128 on port 53")
@@ -19,7 +20,7 @@ def is_wifi_connected():
 def send_data():
     try:
         logging.info("Sending data to server...")
-        os.system("scp obd_data.db david@192.168.1.100:/home/david/car_scanner")
+        os.system("scp /home/david/car_scanner/obd_data.db david@192.168.1.100:/home/david/car_scanner")
         logging.info("Data sent successfully.")
     except Exception as e:
         logging.error(f"Failed to send data: {e}")
@@ -37,6 +38,8 @@ def monitor_and_send_data():
         time.sleep(15)  # Check every 15 seconds
 
 if __name__ == "__main__":
+    sys.stderr = open("stderr_sender.log", "a")
+    sys.stdout = open("stdout_sender.log", "a")
     logging.basicConfig(filename='01_sender.log', format='%(asctime)s: %(message)s',
                     level=logging.DEBUG)
     monitor_and_send_data()
