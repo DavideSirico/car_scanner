@@ -27,3 +27,18 @@ If successfully connected to the car, 0100 will return something instead of "UNA
 
 Step 3 - Connect Car with Python OBD
 * Create a serial port: ```sudo rfcomm bind hci0 <mac_address>```
+
+
+create a python virtual enviroment
+python3 -m venv .venv
+
+activate the python env
+source .venv/bin/activate
+
+install the required python package
+pip install -r requirements.txt
+
+create a systemlink for the service 
+sudo ln -s /home/david/car_scanner.service /etc/systemd/system/
+
+change the variable in the sender.py and reader.py files

@@ -2,13 +2,14 @@
 Description=Car Scanner
 After=network.target bluetooth.target
 
-
 [Service]
-ExecStart=/usr/bin/python3 /home/david/car_scanner/car_scanner.py
 Type=simple
-Restart=always
+User=root
 WorkingDirectory=/home/david/car_scanner
-Environment="PYTHONUNBUFFERED=1"
+ExecStart=/home/david/car_scanner/.venv/bin/python /home/david/car_scanner/reader.py
+ExecStartPost=/home/david/car_scanner/.venv/bin/python /home/david/car_scanner/sender.py
+Restart=on-failure
+Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target
