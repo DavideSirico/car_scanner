@@ -74,7 +74,7 @@ def gather_informations(obd_connection, sql_connection):
 
         logging.info("saving data")
         sql_connection.execute(
-            "INSERT INTO obd_data (timestamp, " + ", ".join(SENSORS) + ") VALUES (datetime('now'), " + ", ".join(["?"] * len(SENSORS)) + ")", sensor_data
+            "INSERT INTO obd_data (timestamp, " + ", ".join(SENSORS) + ") VALUES (strftimesystemctl disable car_service.service('now'), " + ", ".join(["?"] * len(SENSORS)) + ")", sensor_data
         )
         sql_connection.commit()
         for i in range(0,10):
@@ -88,7 +88,7 @@ def connect_sql():
     conn = sqlite3.connect('/home/david/car_scanner/obd_data.db')
     c = conn.cursor()
     query = " REAL, ".join(x for x in SENSORS) + " REAL)"
-    query = "CREATE TABLE IF NOT EXISTS obd_data (timestamp DATE DEFAULT (datetime('now','localtime')), " + query
+    query = "CREATE TABLE IF NOT EXISTS obd_data (timestamp TEXT, " + query
     logging.debug("creating table...")
     c.execute(query)
     return conn
