@@ -6,11 +6,17 @@ import subprocess
 import logging
 import sys
 
+SERVER_ADDR = "192.168.1.100"
+ROUTER_ADDR = "192.168.1.128"
+SERVER_DB_PATH = "/home/david/car_scanner"
+LOCAL_DB_PATH = "/home/david/car_scanner/obd_data.db"
+SERVER_USER = "david"
+
 def is_wifi_connected():
     logging.debug("sending a packet to 192.168.1.128 on port 53")
     try:
         socket.setdefaulttimeout(3)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("192.168.1.128", 53))
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ROUTER_ADDR, 53))
         logging.info("raspb is connected to home wifi")
         return True
     except socket.error as ex:
@@ -20,7 +26,7 @@ def is_wifi_connected():
 def send_data():
     try:
         logging.info("Sending data to server...")
-        os.system("scp /home/david/car_scanner/obd_data.db david@192.168.1.100:/home/david/car_scanner")
+        os.system(f"scp {LOCAL_DB_PATH} {SERVER_USER}@{SERVER_ADDR}:{SERVER_DB_PATH}")
         logging.info("Data sent successfully.")
     except Exception as e:
         logging.error(f"Failed to send data: {e}")

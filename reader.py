@@ -16,6 +16,8 @@ import sqlite3
 import subprocess
 import sys
 
+DB_PATH = "/home/david/car_scanner/obd_data.db"
+SCANNING_INTERVALL = 10 # in seconds 
 SENSORS = ["ENGINE_LOAD", "COOLANT_TEMP", "FUEL_PRESSURE", "INTAKE_PRESSURE", "SPEED",
             "INTAKE_TEMP", "MAF", "THROTTLE_POS", "RUN_TIME", "FUEL_LEVEL",
             "CATALYST_TEMP_B1S1", "CATALYST_TEMP_B2S1", "CATALYST_TEMP_B1S2",
@@ -77,7 +79,7 @@ def gather_informations(obd_connection, sql_connection):
             "INSERT INTO obd_data (timestamp, " + ", ".join(SENSORS) + ") VALUES (datetime('now'), " + ", ".join(["?"] * len(SENSORS)) + ")", sensor_data
         )
         sql_connection.commit()
-        for i in range(0,10):
+        for i in range(0,SCANNING_INTERVALL):
             logging.debug("waiting %s seconds", i)
             time.sleep(1)
         
@@ -85,7 +87,7 @@ def gather_informations(obd_connection, sql_connection):
 
 def connect_sql():
     logging.info("connecting to SQL...")
-    conn = sqlite3.connect('/home/david/car_scanner/obd_data.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     query = " REAL, ".join(x for x in SENSORS) + " REAL)"
     query = "CREATE TABLE IF NOT EXISTS obd_data (timestamp DATE DEFAULT (datetime('now','localtime')), " + query
@@ -177,7 +179,7 @@ if __name__ == "__main__":
     logging.info("SHUTTING DOWN IN 30 SECONDS...")
     obd_connection.close()
     sql_connection.close()
-    os.system("systemctl disable car_service.service")
+    # os.system("systemctl disable car_service.service")
     time.sleep(30)
     logging.info("SHUTTING DOWN NOW")
     os.system("shutdown -h now")
