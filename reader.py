@@ -113,7 +113,7 @@ def connect_obd():
 
         obd.logger.setLevel(obd.logging.DEBUG)
         logging.info("connecting with the obd class")
-        connection = obd.OBD()  # Auto-connect to USB or Bluetooth OBD-II adapter
+        connection = obd.OBD("/dev/rfcomm0")  # Auto-connect to USB or Bluetooth OBD-II adapter
 
         return connection
     except Exception as e:

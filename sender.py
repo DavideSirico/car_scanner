@@ -5,7 +5,7 @@ import os
 import subprocess
 import logging
 import sys
-import RPi.GPIO as GPIO
+import gpiozero
 import threading
 
 SERVER_ADDR = "192.168.1.100"
@@ -13,7 +13,10 @@ ROUTER_ADDR = "192.168.1.128"
 SERVER_DB_PATH = "/home/david/car_scanner"
 LOCAL_DB_PATH = "/home/david/car_scanner/obd_data.db"
 SERVER_USER = "david"
-LED_GREEN = 18
+LED_GREEN = 24
+
+led_green = gpiozero.LED(LED_GREEN)
+
 
 def is_wifi_connected():
     logging.debug("sending a packet to 192.168.1.128 on port 53")
@@ -28,9 +31,9 @@ def is_wifi_connected():
     
 def blink_led():
     while blinking:
-        GPIO.output(LED_GREEN, GPIO.HIGH)
+        led_green.on()
         time.sleep(0.5)
-        GPIO.output(LED_GREEN, GPIO.LOW)
+        led_green.off()
         time.sleep(0.5)
 
 def send_data():
@@ -57,11 +60,11 @@ def monitor_and_send_data():
         logging.debug("checking if the rasp is connected to wifi")
         if is_wifi_connected():
             logging.debug("connected!")
-            GPIO.output(LED_GREEN, GPIO.HIGH)
+            led_green.on()
             send_data()
             break  # Exit loop after successful data transfer
         else:
-            GPIO.output(LED_GREEN, GPIO.LOW)
+            led_green.off()
             logging.warning("Waiting to connect to home Wi-Fi...")
         time.sleep(15)  # Check every 15 seconds
 
@@ -70,7 +73,5 @@ if __name__ == "__main__":
     sys.stdout = open("stdout_sender.log", "a")
     logging.basicConfig(filename='01_sender.log', format='%(asctime)s: %(message)s',
                     level=logging.DEBUG)
-    GPIO.setup(LED_GREEN, GPIO.OUT)
-    GPIO.output(LED_GREEN, GPIO.LOW)
     monitor_and_send_data()
     
