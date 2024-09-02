@@ -1,13 +1,3 @@
-# sistema di soft-shutdown
-# sistema di raccolta dati in formato prometheus?? o json/xml (servizio)
-# script durante l'avvio
-# collegamento all'obd
-# sistema di logging
-# gestione delle eccezioni
-# controllare se sono a casa (collegato al wifi) e mandare i dati a 192.168.1.100
-
-
-# 1. collegamento all'obd
 import logging
 import os
 import obd
@@ -15,6 +5,9 @@ import time
 import sqlite3
 import subprocess
 import sys
+import RPi.GPIO as GPIO
+import threading
+import signal
 
 DB_PATH = "/home/david/car_scanner/obd_data.db"
 SCANNING_INTERVALL = 10 # in seconds 
@@ -27,64 +20,14 @@ SENSORS = ["ENGINE_LOAD", "COOLANT_TEMP", "FUEL_PRESSURE", "INTAKE_PRESSURE", "S
 MAC_ADDR = "13:E0:2F:8D:54:A9"
 # IOS obd_mac_addr = "D2:E0:2F:8D:54:A9"
 
-def check_rfcomm_bind():
-    logging.debug("Checking if there is already a RFCOMM connection with the OBD reader")
-    try:
-        # Running the rfcomm show command
-        output = subprocess.check_output(["rfcomm"], text=True)
-        
-        # Checking if hci0 is mentioned in the output
-        if MAC_ADDR in output:
-            logging.info("RFCOMM bind to hci0 found.")
-            return True
-        else:
-            logging.info("No RFCOMM bind to hci0 found.")
-            return False
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Error checking RFCOMM: {e}")
-        return False
+LED_RED = 36
+LED_BLUE = 31
+LED_GREEN = 18
+SWITCH = 5
 
+running = True
 
-def gather_informations(obd_connection, sql_connection):
-    logging.info("Monitoring car engine status...")
-    engine_running = True
-
-    while engine_running:
-        logging.info("checking if the car is still on")
-        rpm = obd_connection.query(obd.commands.RPM, force=True)
-        logging.debug("RPM value: %s", rpm.value)
-
-        if rpm.value is None or rpm.value.magnitude == 0:
-            logging.debug("RPM value is none or zero")
-            engine_running = False
-            logging.info("car is off")
-            break
-
-        logging.debug("RPM value: %s", rpm.value)
-        logging.info("getting car data...")
-        
-        sensor_data = []
-
-        for sensor in SENSORS:
-            logging.debug(f"reading {sensor}:")
-            res = obd_connection.query(getattr(obd.commands, sensor), force=True)
-            if res.value is not None: 
-                logging.debug(res.value.magnitude)
-                sensor_data.append(res.value.magnitude)
-            else:
-                sensor_data.append(None)
-
-        logging.info("saving data")
-        sql_connection.execute(
-            "INSERT INTO obd_data (timestamp, " + ", ".join(SENSORS) + ") VALUES (datetime('now'), " + ", ".join(["?"] * len(SENSORS)) + ")", sensor_data
-        )
-        sql_connection.commit()
-        for i in range(0,SCANNING_INTERVALL):
-            logging.debug("waiting %s seconds", i)
-            time.sleep(1)
-        
-
-
+    
 def connect_sql():
     logging.info("connecting to SQL...")
     conn = sqlite3.connect(DB_PATH)
@@ -95,93 +38,138 @@ def connect_sql():
     c.execute(query)
     return conn
 
-def is_device_connected(mac_address):
-    logging.debug("checking if the obd reader is already connected with bluetooth")
-    try:
-        # Run the hcitool con command to list all connected devices
-        output = subprocess.check_output(["hcitool", "con"], text=True)
-        logging.debug(output)
-        # Check if the MAC address is in the output
-        if mac_address in output:
-            logging.debug(f"Device {mac_address} is connected.")
-            return True
-        else:
-            logging.warning(f"Device {mac_address} is not connected.")
-            return False
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Error checking Bluetooth connections: {e}")
-        return False
+def is_car_on(obd_connection):
+    logging.info("checking if the car is responding...")
+    response = obd_connection.query(obd.commands.RPM)
+    if response and response.value is not None:
+        logging.debug("Car is on and connected")
+        return True
+    return False
 
-def wait_for_obd_connection():
+def gather_informations(obd_connection, sql_connection):
+    logging.info("Monitoring car engine status...")
+
+        
+    sensor_data = []
+
+    for sensor in SENSORS:
+        logging.debug(f"reading {sensor}:")
+        res = obd_connection.query(getattr(obd.commands, sensor), force=True)
+        if res.value is not None: 
+            logging.debug(res.value.magnitude)
+            sensor_data.append(res.value.magnitude)
+        else:
+            sensor_data.append(None)
+
+    logging.info("saving data")
+    sql_connection.execute(
+        "INSERT INTO obd_data (timestamp, " + ", ".join(SENSORS) + ") VALUES (datetime('now'), " + ", ".join(["?"] * len(SENSORS)) + ")", sensor_data
+    )
+    sql_connection.commit()
+
+def shutdown():
+    global running
+    running = False
+
+def blink_blue_led():
+    while blinking:
+        GPIO.output(LED_BLUE, GPIO.HIGH)
+        time.sleep(0.5)
+        GPIO.output(LED_BLUE, GPIO.LOW)
+        time.sleep(0.5)
+
+
+def connect_obd():
+    global blinking
+    # Start blinking the blue LED
+    blinking = True
+    blink_thread = threading.Thread(target=blink_blue_led)
+    blink_thread.start()
+
     logging.info("Waiting for OBD-II connection...")
 
     # Try to connect to the OBD-II adapter
-    connection = None
-    while connection is None or not connection.is_connected():
-        try:
-            logging.debug("connecting to obd scanner bluetooth...")
+    try:
+        logging.debug("connecting to obd scanner bluetooth...")
 
-            if not is_device_connected(MAC_ADDR):
-                os.system("/bin/bash -c \"bluetoothctl power on\"")
-                os.system("/bin/bash -c \"bluetoothctl pairable on\"")
-                os.system("/bin/bash -c \"bluetoothctl agent on\"")
-                os.system("/bin/bash -c \"bluetoothctl default-agent\"")
+        os.system("/bin/bash -c \"bluetoothctl power on\"")
+        os.system("/bin/bash -c \"bluetoothctl pairable on\"")
+        os.system("/bin/bash -c \"bluetoothctl agent on\"")
+        os.system("/bin/bash -c \"bluetoothctl default-agent\"")
 
-                logging.debug("connecting...")
-                os.system(f"/bin/bash -c \"bluetoothctl connect {MAC_ADDR}\"")
-                
-                logging.debug("pairing")
-                os.system(f"/bin/bash -c \"bluetoothctl pair {MAC_ADDR}\"")
-                
-                logging.debug("trusting")
-                os.system(f"/bin/bash -c \"bluetoothctl trust {MAC_ADDR}\"")
+        logging.debug("connecting...")
+        os.system(f"/bin/bash -c \"bluetoothctl connect {MAC_ADDR}\"")
+        
+        logging.debug("pairing")
+        os.system(f"/bin/bash -c \"bluetoothctl pair {MAC_ADDR}\"")
+        
+        logging.debug("trusting")
+        os.system(f"/bin/bash -c \"bluetoothctl trust {MAC_ADDR}\"")
 
-            if not check_rfcomm_bind():
-                logging.debug("creating serial port")
-                os.system(f"/bin/bash -c \"rfcomm bind hci0 {MAC_ADDR}\"")
 
-            obd.logger.setLevel(obd.logging.DEBUG)
-            logging.info("connecting with the obd class")
-            connection = obd.OBD()  # Auto-connect to USB or Bluetooth OBD-II adapter
-        except Exception as e:
-            logging.error(f"Connection error: {e}")
-        logging.warning("retry in 2 second")
-        time.sleep(2)  # Wait before trying again
+        obd.logger.setLevel(obd.logging.DEBUG)
+        logging.info("connecting with the obd class")
+        connection = obd.OBD()  # Auto-connect to USB or Bluetooth OBD-II adapter
 
-    logging.info("Connected to OBD-II adapter.")
-    # Check if the car is on by querying a basic command like RPM
-    logging.info("checking if the car is responding...")
-    while True:
-        response = connection.query(obd.commands.RPM)
-        if response and response.value is not None:
-            logging.debug("successful read rpm value from the car.")
-            logging.debug("Car is on and connected")
-            break
-        else:
-            logging.warning("OBD-II adapter connected, but car is off or not detected. Retrying...")
-        logging.warning("re-checking in 2 seconds")
-        time.sleep(2)  # Wait before checking again
-
-    return connection
-
+        return connection
+    except Exception as e:
+        logging.error(f"Connection error: {e}")
+        return None
+    finally:
+         # Stop blinking the blue LED
+        blinking = False
+        blink_thread.join()
+    
 
 if __name__ == "__main__":
-    sys.stderr = open("stderr_reader.log", "a")
-    sys.stdout = open("stdout_reader.log", "a")
-    logging.basicConfig(filename='01_reader.log', format='%(asctime)s: %(message)s',
-                    level=logging.DEBUG)
-    obd_connection = wait_for_obd_connection()
-    logging.info("CONNECTION WITH OBD SUCCESSFUL")
-    sql_connection = connect_sql()
-    logging.info("CONNECTION WITH DATABASE SUCCESSFUL")
-    gather_informations(obd_connection, sql_connection)
+    try:
+        # setup leds
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(LED_RED, GPIO.OUT)
+        GPIO.setup(LED_BLUE, GPIO.OUT)
+        GPIO.setup(SWITCH, GPIO.IN)
 
-    logging.info("SHUTTING DOWN IN 30 SECONDS...")
-    obd_connection.close()
-    sql_connection.close()
-    # os.system("systemctl disable car_service.service")
-    time.sleep(30)
-    logging.info("SHUTTING DOWN NOW")
-    os.system("shutdown -h now")
-
+        # setup logging
+        sys.stderr = open("stderr_reader.log", "a")
+        sys.stdout = open("stdout_reader.log", "a")
+        logging.basicConfig(filename='01_reader.log', format='%(asctime)s: %(message)s',
+                        level=logging.DEBUG)
         
+        # turn on red led
+        GPIO.output(LED_RED, GPIO.HIGH)
+        sql_connection = connect_sql()
+        logging.info("CONNECTION WITH DATABASE SUCCESSFUL")
+
+        signal.signal(signal.SIGINT, shutdown)
+        signal.signal(signal.SIGTERM, shutdown)
+
+        GPIO.add_event_detect(SWITCH, GPIO.FALLING, callback=shutdown, bouncetime=2000)
+        
+        os.system(f"/bin/bash -c \"rfcomm bind hci0 {MAC_ADDR}\"")
+        obd_connection = None
+
+        while running:
+            # controllo se sono connesso all'obd
+            while obd_connection == None or obd_connection.status() == obd.OBDStatus.NOT_CONNECTED:
+                obd_connection = connect_obd()
+                if not obd_connection or obd_connection.status() != obd.OBDStatus.CONNECTED:
+                    GPIO.output(LED_BLUE, GPIO.LOW)
+                    logging.warning("Failed to connect to OBD-II adapter, retrying in 60 seconds...")
+                    time.sleep(60)
+                    continue
+
+                if obd_connection.is_connected():
+                    GPIO.output(LED_BLUE, GPIO.HIGH)
+                    gather_informations(obd_connection, sql_connection)
+                    time.sleep(SCANNING_INTERVALL)
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+    finally:
+        logging.info("Cleaning up resources...")
+        GPIO.output(LED_RED, GPIO.LOW)
+        sql_connection.close()
+        obd_connection.close()
+        GPIO.cleanup()
+        logging.info("Program terminated gracefully.")
+        os.system("shutdown now")
