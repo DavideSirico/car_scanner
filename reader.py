@@ -169,7 +169,6 @@ if __name__ == "__main__":
         logging.info("Cleaning up resources...")
         GPIO.output(LED_RED, GPIO.LOW)
         sql_connection.close()
-        obd_connection.close()
         GPIO.cleanup()
         logging.info("Program terminated gracefully.")
-        os.system("shutdown now")
+        os.system("shutdown -h now")
