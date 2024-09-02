@@ -81,3 +81,10 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
 - Sending data to another server when the car is at home
 - Auto connection to the OBD Scanner
 - Logging for finding errors
+
+
+
+
+## TODO:
+ - temperature and humidity sensor
+ - multicolor led
