@@ -27,6 +27,10 @@ SWITCH = 5
 
 running = True
 
+led_red = gpiozero.LED(LED_RED)
+led_blue = gpiozero.LED(LED_BLUE)
+led_green = gpiozero.LED(LED_GREEN)
+switch = gpiozero.Button(SWITCH)
     
 def connect_sql():
     logging.info("connecting to SQL...")
@@ -123,12 +127,6 @@ def connect_obd():
 
 if __name__ == "__main__":
     try:
-        # setup leds
-        led_red = gpiozero.LED(LED_RED)
-        led_blue = gpiozero.LED(LED_BLUE)
-        led_green = gpiozero.LED(LED_GREEN)
-        switch = gpiozero.Button(SWITCH)
-
         # setup logging
         sys.stderr = open("stderr_reader.log", "a")
         sys.stdout = open("stdout_reader.log", "a")
