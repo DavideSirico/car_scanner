@@ -5,7 +5,7 @@ import time
 import sqlite3
 import subprocess
 import sys
-import RPi.GPIO as GPIO
+import gpiozero
 import threading
 import signal
 
@@ -73,9 +73,9 @@ def shutdown():
 
 def blink_blue_led():
     while blinking:
-        GPIO.output(LED_BLUE, GPIO.HIGH)
+        led_blue.on()
         time.sleep(0.5)
-        GPIO.output(LED_BLUE, GPIO.LOW)
+        led_blue.off()
         time.sleep(0.5)
 
 
@@ -124,10 +124,10 @@ def connect_obd():
 if __name__ == "__main__":
     try:
         # setup leds
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(LED_RED, GPIO.OUT)
-        GPIO.setup(LED_BLUE, GPIO.OUT)
-        GPIO.setup(SWITCH, GPIO.IN)
+        led_red = gpiozero.LED(LED_RED)
+        led_blue = gpiozero.LED(LED_BLUE)
+        led_green = gpiozero.LED(LED_GREEN)
+        switch = gpiozero.Button(SWITCH)
 
         # setup logging
         sys.stderr = open("stderr_reader.log", "a")
@@ -136,14 +136,14 @@ if __name__ == "__main__":
                         level=logging.DEBUG)
         
         # turn on red led
-        GPIO.output(LED_RED, GPIO.HIGH)
+        led_red.on()
         sql_connection = connect_sql()
         logging.info("CONNECTION WITH DATABASE SUCCESSFUL")
 
         signal.signal(signal.SIGINT, shutdown)
         signal.signal(signal.SIGTERM, shutdown)
 
-        GPIO.add_event_detect(SWITCH, GPIO.FALLING, callback=shutdown, bouncetime=2000)
+        switch.when_pressed = shutdown
         
         os.system(f"/bin/bash -c \"rfcomm bind hci0 {MAC_ADDR}\"")
         obd_connection = None
@@ -153,13 +153,13 @@ if __name__ == "__main__":
             while obd_connection == None or obd_connection.status() == obd.OBDStatus.NOT_CONNECTED:
                 obd_connection = connect_obd()
                 if not obd_connection or obd_connection.status() != obd.OBDStatus.CONNECTED:
-                    GPIO.output(LED_BLUE, GPIO.LOW)
+                    led_blue.off()
                     logging.warning("Failed to connect to OBD-II adapter, retrying in 60 seconds...")
                     time.sleep(60)
                     continue
 
                 if obd_connection.is_connected():
-                    GPIO.output(LED_BLUE, GPIO.HIGH)
+                    led_blue.on()
                     gather_informations(obd_connection, sql_connection)
                     time.sleep(SCANNING_INTERVALL)
 
@@ -167,8 +167,7 @@ if __name__ == "__main__":
         logging.error(f"An error occurred: {e}")
     finally:
         logging.info("Cleaning up resources...")
-        GPIO.output(LED_RED, GPIO.LOW)
+        led_red.off()
         sql_connection.close()
-        GPIO.cleanup()
         logging.info("Program terminated gracefully.")
         os.system("shutdown -h now")
