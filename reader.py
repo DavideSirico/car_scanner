@@ -165,7 +165,7 @@ if __name__ == "__main__":
                 break
 
             logging.info("OBD_CONNECTION STATUS:")
-            logging.info(str(obd_connection.status()))
+            logging.info(obd_connection.status())
             # controllo se sono connesso all'obd
             while obd_connection.status() != obd.OBDStatus.CAR_CONNECTED:
                 if not running:
