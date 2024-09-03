@@ -164,13 +164,13 @@ if __name__ == "__main__":
             if not running:
                 break
 
+            logging.info("OBD_CONNECTION STATUS:")
+            logging.info(str(obd_connection.status()))
             # controllo se sono connesso all'obd
             while obd_connection == None or obd_connection.status() != obd.OBDStatus.CAR_CONNECTED:
                 if not running:
                     break  # Exit the loop if shutdown signal is received
                 obd_connection = connect_obd()
-                logging.info("OBD_CONNECTION STATUS:")
-                logging.info(str(obd_connection.status()))
                 if (not obd_connection) or obd_connection.status() != obd.OBDStatus.CAR_CONNECTED:
                     led_blue.off()
                     logging.warning("Failed to connect to OBD-II adapter, retrying in 60 seconds...")
