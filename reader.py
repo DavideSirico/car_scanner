@@ -68,6 +68,7 @@ def gather_informations(obd_connection, sql_connection):
         "INSERT INTO obd_data (timestamp, " + ", ".join(SENSORS) + ") VALUES (datetime('now'), " + ", ".join(["?"] * len(SENSORS)) + ")", sensor_data
     )
     sql_connection.commit()
+    logging.info("data saved")
 
 def shutdown(signum, frame):
     global running
@@ -179,6 +180,7 @@ if __name__ == "__main__":
                 if obd_connection.is_connected():
                     led_blue.value = 0.5
                     gather_informations(obd_connection, sql_connection)
+                    logging.info(f"waiting for {SCANNING_INTERVALL}")
                     time.sleep(SCANNING_INTERVALL)
 
     except Exception as e:
@@ -189,5 +191,5 @@ if __name__ == "__main__":
         sql_connection.close()
         time.sleep(10)
         logging.info("Program terminated gracefully.")
-        
+
         os.system("shutdown -h now")
