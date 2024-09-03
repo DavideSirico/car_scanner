@@ -71,7 +71,7 @@ def monitor_and_send_data():
 if __name__ == "__main__":
     sys.stderr = open("stderr_sender.log", "a")
     sys.stdout = open("stdout_sender.log", "a")
-    logging.basicConfig(filename='01_sender.log', format='%(asctime)s: %(message)s',
+    logging.basicConfig(filename='sender.log', format='%(asctime)s: %(message)s',
                     level=logging.DEBUG)
     monitor_and_send_data()
     

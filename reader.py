@@ -31,7 +31,7 @@ led_red = gpiozero.LED(LED_RED)
 led_blue = gpiozero.LED(LED_BLUE)
 led_green = gpiozero.LED(LED_GREEN)
 switch = gpiozero.Button(SWITCH)
-    
+
 def connect_sql():
     logging.info("connecting to SQL...")
     conn = sqlite3.connect(DB_PATH)
@@ -71,7 +71,7 @@ def gather_informations(obd_connection, sql_connection):
     )
     sql_connection.commit()
 
-def shutdown():
+def shutdown(signum, frame):
     global running
     running = False
 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
         # setup logging
         sys.stderr = open("stderr_reader.log", "a")
         sys.stdout = open("stdout_reader.log", "a")
-        logging.basicConfig(filename='01_reader.log', format='%(asctime)s: %(message)s',
+        logging.basicConfig(filename='reader.log', format='%(asctime)s: %(message)s',
                         level=logging.DEBUG)
         
         # turn on red led
@@ -167,5 +167,6 @@ if __name__ == "__main__":
         logging.info("Cleaning up resources...")
         led_red.off()
         sql_connection.close()
+        time.sleep(10)
         logging.info("Program terminated gracefully.")
         os.system("shutdown -h now")
