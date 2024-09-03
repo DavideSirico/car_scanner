@@ -142,7 +142,7 @@ if __name__ == "__main__":
         signal.signal(signal.SIGINT, shutdown)
         signal.signal(signal.SIGTERM, shutdown)
 
-        switch.when_pressed = shutdown_button
+        switch.when_released = shutdown_button
         
         os.system(f"/bin/bash -c \"rfcomm bind hci0 {MAC_ADDR}\"")
         obd_connection = None
