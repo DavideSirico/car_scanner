@@ -22,14 +22,12 @@ MAC_ADDR = "13:E0:2F:8D:54:A9"
 
 LED_RED = 16
 LED_BLUE = 6
-LED_GREEN = 24
 SWITCH = 3
 
 running = True
 
 led_red = gpiozero.LED(LED_RED)
 led_blue = gpiozero.LED(LED_BLUE)
-led_green = gpiozero.LED(LED_GREEN)
 switch = gpiozero.Button(SWITCH)
 
 def connect_sql():
