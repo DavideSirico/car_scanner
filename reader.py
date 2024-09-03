@@ -158,26 +158,29 @@ if __name__ == "__main__":
         switch.when_released = shutdown_button
         
         os.system(f"/bin/bash -c \"rfcomm bind hci0 {MAC_ADDR}\"")
-        obd_connection = obd.OBDStatus.NOT_CONNECTED
+        obd_connection = None
 
         while running:
             if not running:
                 break
 
             logging.info("OBD_CONNECTION STATUS:")
-            logging.info(obd_connection.status())
+            if obd_connection is not None:
+                logging.info(str(obd_connection.status()))
+            else:
+                logging.info("None")
             # controllo se sono connesso all'obd
-            while obd_connection.status() != obd.OBDStatus.CAR_CONNECTED:
+            while obd_connection == None or obd_connection.status() != obd.OBDStatus.CAR_CONNECTED:
                 if not running:
                     break  # Exit the loop if shutdown signal is received
                 obd_connection = connect_obd()
-                if obd_connection.status() != obd.OBDStatus.CAR_CONNECTED:
+                if (not obd_connection) or obd_connection.status() != obd.OBDStatus.CAR_CONNECTED:
                     led_blue.off()
                     logging.warning("Failed to connect to OBD-II adapter, retrying in 60 seconds...")
                     time.sleep(60)
                     continue
 
-                if obd_connection.is_connected():
+                if obd_connection.is_connected(obd_connection):
                     led_blue.value = 0.2
                     if is_car_on():
                         gather_informations(obd_connection, sql_connection)
