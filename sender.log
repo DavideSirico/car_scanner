@@ -1,0 +1,19 @@
+2024-09-03 15:07:02,118: monitoring and sending data
+2024-09-03 15:07:02,119: checking if the rasp is connected to wifi
+2024-09-03 15:07:02,119: sending a packet to 192.168.1.128 on port 53
+2024-09-03 15:07:02,123: raspb is connected to home wifi
+2024-09-03 15:07:02,124: connected!
+2024-09-03 15:07:02,125: Sending data to server...
+2024-09-03 15:07:08,792: Data sent successfully.
+2024-09-03 15:08:24,134: checking if the rasp is connected to wifi
+2024-09-03 15:08:24,135: sending a packet to 192.168.1.128 on port 53
+2024-09-03 15:08:25,360: raspb is connected to home wifi
+2024-09-03 15:08:25,361: connected!
+2024-09-03 15:08:25,362: Sending data to server...
+2024-09-03 15:10:02,236: monitoring and sending data
+2024-09-03 15:10:02,236: checking if the rasp is connected to wifi
+2024-09-03 15:10:02,237: sending a packet to 192.168.1.128 on port 53
+2024-09-03 15:10:02,241: raspb is connected to home wifi
+2024-09-03 15:10:02,241: connected!
+2024-09-03 15:10:02,243: Sending data to server...
+2024-09-03 15:10:33,343: Data sent successfully.
