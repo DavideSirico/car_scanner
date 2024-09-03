@@ -177,12 +177,12 @@ if __name__ == "__main__":
                     time.sleep(60)
                     continue
 
-                if obd_connection.is_connected():
+                if obd_connection.is_connected(obd_connection):
                     led_blue.value = 0.5
-                    gather_informations(obd_connection, sql_connection)
+                    if is_car_on():
+                        gather_informations(obd_connection, sql_connection)
                     logging.info(f"waiting for {SCANNING_INTERVALL}")
                     time.sleep(SCANNING_INTERVALL)
-
     except Exception as e:
         logging.error(f"An error occurred: {e}")
     finally:
