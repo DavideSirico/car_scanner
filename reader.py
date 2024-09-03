@@ -123,10 +123,19 @@ def connect_obd():
         blinking = False
         blink_thread.join()
     
+
+def blink_red_led():
+    while not running:
+        led_blue.on()
+        time.sleep(0.5)
+        led_blue.off()
+        time.sleep(0.5)
+
 def shutdown_button():
     global running
     logging.info("SHUTDOWN SWITCH")
-
+    blink_thread = threading.Thread(target=blink_red_led)
+    blink_thread.start()
     running = False
 
 if __name__ == "__main__":
