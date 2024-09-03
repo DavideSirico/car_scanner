@@ -62,6 +62,7 @@ def monitor_and_send_data():
             logging.debug("connected!")
             led_green.on()
             send_data()
+            led_green.on()
             time.sleep(60)
         else:
             led_green.off()

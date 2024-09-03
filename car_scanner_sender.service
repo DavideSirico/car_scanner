@@ -1,0 +1,14 @@
+[Unit]
+Description=Car Scanner sender
+After=network.target bluetooth.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/david/car_scanner
+ExecStart=/home/david/car_scanner/.venv/bin/python /home/david/car_scanner/seader.py
+Restart=on-failure
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

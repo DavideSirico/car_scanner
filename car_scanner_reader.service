@@ -1,5 +1,5 @@
 [Unit]
-Description=Car Scanner
+Description=Car Scanner reader
 After=network.target bluetooth.target
 
 [Service]
@@ -7,7 +7,6 @@ Type=simple
 User=root
 WorkingDirectory=/home/david/car_scanner
 ExecStart=/home/david/car_scanner/.venv/bin/python /home/david/car_scanner/reader.py
-ExecStartPost=/home/david/car_scanner/.venv/bin/python /home/david/car_scanner/sender.py
 Restart=on-failure
 Environment=PYTHONUNBUFFERED=1
 
