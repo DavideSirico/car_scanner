@@ -122,6 +122,9 @@ def connect_obd():
         blinking = False
         blink_thread.join()
     
+def shutdown_button():
+    global running
+    running = False
 
 if __name__ == "__main__":
     try:
@@ -139,7 +142,7 @@ if __name__ == "__main__":
         signal.signal(signal.SIGINT, shutdown)
         signal.signal(signal.SIGTERM, shutdown)
 
-        switch.when_pressed = shutdown
+        switch.when_pressed = shutdown_button
         
         os.system(f"/bin/bash -c \"rfcomm bind hci0 {MAC_ADDR}\"")
         obd_connection = None
