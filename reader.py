@@ -168,7 +168,9 @@ if __name__ == "__main__":
                 if not running:
                     break  # Exit the loop if shutdown signal is received
                 obd_connection = connect_obd()
-                if not obd_connection or obd_connection.status() == obd.OBDStatus.NOT_CONNECTED:
+                logging.info("OBD_CONNECTION STATUS:")
+                logging.info(str(obd_connection.status()))
+                if (not obd_connection) or obd_connection.status() == obd.OBDStatus.NOT_CONNECTED:
                     led_blue.off()
                     logging.warning("Failed to connect to OBD-II adapter, retrying in 60 seconds...")
                     time.sleep(60)
@@ -187,4 +189,5 @@ if __name__ == "__main__":
         sql_connection.close()
         time.sleep(10)
         logging.info("Program terminated gracefully.")
+        
         os.system("shutdown -h now")
