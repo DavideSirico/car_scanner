@@ -26,8 +26,8 @@ SWITCH = 3
 
 running = True
 
-led_red = gpiozero.LED(LED_RED)
-led_blue = gpiozero.LED(LED_BLUE)
+led_red = gpiozero.PWMLED(LED_RED)
+led_blue = gpiozero.PWMLED(LED_BLUE)
 switch = gpiozero.Button(SWITCH)
 
 def connect_sql():
@@ -76,7 +76,7 @@ def shutdown(signum, frame):
 
 def blink_blue_led():
     while blinking:
-        led_blue.on()
+        led_blue.value = 0.5
         time.sleep(0.5)
         led_blue.off()
         time.sleep(0.5)
@@ -126,9 +126,9 @@ def connect_obd():
 
 def blink_red_led():
     while not running:
-        led_blue.on()
+        led_red.value = 0.5
         time.sleep(0.5)
-        led_blue.off()
+        led_red.off()
         time.sleep(0.5)
 
 def shutdown_button():
@@ -147,7 +147,7 @@ if __name__ == "__main__":
                         level=logging.DEBUG)
         
         # turn on red led
-        led_red.on()
+        led_red.value = 0.5
         sql_connection = connect_sql()
         logging.info("CONNECTION WITH DATABASE SUCCESSFUL")
 
@@ -175,7 +175,7 @@ if __name__ == "__main__":
                     continue
 
                 if obd_connection.is_connected():
-                    led_blue.on()
+                    led_blue.value = 0.5
                     gather_informations(obd_connection, sql_connection)
                     time.sleep(SCANNING_INTERVALL)
 
