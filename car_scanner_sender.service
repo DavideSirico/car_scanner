@@ -6,7 +6,7 @@ After=network.target bluetooth.target
 Type=simple
 User=root
 WorkingDirectory=/home/david/car_scanner
-ExecStart=/home/david/car_scanner/.venv/bin/python /home/david/car_scanner/seader.py
+ExecStart=/home/david/car_scanner/.venv/bin/python /home/david/car_scanner/sender.py
 Restart=on-failure
 Environment=PYTHONUNBUFFERED=1
 

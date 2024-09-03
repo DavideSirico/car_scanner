@@ -76,3 +76,165 @@
 2024-09-03 15:12:36,227: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
 2024-09-03 15:12:41,351: Connection error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
 2024-09-03 15:12:41,573: Failed to connect to OBD-II adapter, retrying in 60 seconds...
+2024-09-03 15:22:59,659: connecting to SQL...
+2024-09-03 15:22:59,670: creating table...
+2024-09-03 15:22:59,671: CONNECTION WITH DATABASE SUCCESSFUL
+2024-09-03 15:22:59,712: Waiting for OBD-II connection...
+2024-09-03 15:22:59,713: connecting to obd scanner bluetooth...
+2024-09-03 15:23:00,009: connecting...
+2024-09-03 15:23:05,210: pairing
+2024-09-03 15:23:05,306: trusting
+2024-09-03 15:23:05,370: connecting with the obd class
+2024-09-03 15:23:05,371: ======================= python-OBD (v0.7.2) =======================
+2024-09-03 15:23:05,371: Explicit port defined
+2024-09-03 15:23:05,372: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
+2024-09-03 15:23:10,497: Connection error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+2024-09-03 15:23:10,719: Failed to connect to OBD-II adapter, retrying in 60 seconds...
+2024-09-03 15:24:48,440: Waiting for OBD-II connection...
+2024-09-03 15:24:48,441: connecting to obd scanner bluetooth...
+2024-09-03 15:24:48,728: connecting...
+2024-09-03 15:24:53,930: pairing
+2024-09-03 15:24:54,022: trusting
+2024-09-03 15:24:54,095: connecting with the obd class
+2024-09-03 15:24:54,095: ======================= python-OBD (v0.7.2) =======================
+2024-09-03 15:24:54,096: Explicit port defined
+2024-09-03 15:24:54,096: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
+2024-09-03 15:24:59,221: Connection error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+2024-09-03 15:24:59,445: Failed to connect to OBD-II adapter, retrying in 60 seconds...
+2024-09-03 15:25:59,447: Waiting for OBD-II connection...
+2024-09-03 15:25:59,448: connecting to obd scanner bluetooth...
+2024-09-03 15:25:59,750: connecting...
+2024-09-03 15:26:04,953: pairing
+2024-09-03 15:26:05,047: trusting
+2024-09-03 15:26:05,110: connecting with the obd class
+2024-09-03 15:26:05,111: ======================= python-OBD (v0.7.2) =======================
+2024-09-03 15:26:05,111: Explicit port defined
+2024-09-03 15:26:05,112: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
+2024-09-03 15:26:10,236: Connection error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+2024-09-03 15:26:10,452: Failed to connect to OBD-II adapter, retrying in 60 seconds...
+2024-09-03 15:27:10,454: Waiting for OBD-II connection...
+2024-09-03 15:27:10,454: connecting to obd scanner bluetooth...
+2024-09-03 15:27:10,768: connecting...
+2024-09-03 15:27:15,972: pairing
+2024-09-03 15:27:16,062: trusting
+2024-09-03 15:27:16,130: connecting with the obd class
+2024-09-03 15:27:16,130: ======================= python-OBD (v0.7.2) =======================
+2024-09-03 15:27:16,131: Explicit port defined
+2024-09-03 15:27:16,131: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
+2024-09-03 15:27:21,256: Connection error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+2024-09-03 15:27:21,459: Failed to connect to OBD-II adapter, retrying in 60 seconds...
+2024-09-03 15:30:20,776: connecting to SQL...
+2024-09-03 15:30:20,777: creating table...
+2024-09-03 15:30:20,778: CONNECTION WITH DATABASE SUCCESSFUL
+2024-09-03 15:30:20,790: Waiting for OBD-II connection...
+2024-09-03 15:30:20,791: connecting to obd scanner bluetooth...
+2024-09-03 15:30:21,048: connecting...
+2024-09-03 15:30:26,250: pairing
+2024-09-03 15:30:26,345: trusting
+2024-09-03 15:30:26,409: connecting with the obd class
+2024-09-03 15:30:26,410: ======================= python-OBD (v0.7.2) =======================
+2024-09-03 15:30:26,410: Explicit port defined
+2024-09-03 15:30:26,411: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
+2024-09-03 15:30:31,535: Connection error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+2024-09-03 15:30:31,796: Failed to connect to OBD-II adapter, retrying in 60 seconds...
+2024-09-03 15:30:50,094: SHUTDOWN SWITCH
+2024-09-03 15:30:50,095: SHUTDOWN SWITCH
+2024-09-03 15:30:50,096: SHUTDOWN SWITCH
+2024-09-03 15:30:56,500: SHUTDOWN SWITCH
+2024-09-03 15:31:31,796: Cleaning up resources...
+2024-09-03 15:31:41,798: Program terminated gracefully.
+2024-09-03 15:31:42,027: SHUTDOWN SIGN
+2024-09-03 15:57:47,823: connecting to SQL...
+2024-09-03 15:57:47,834: creating table...
+2024-09-03 15:57:47,836: CONNECTION WITH DATABASE SUCCESSFUL
+2024-09-03 15:57:47,880: Waiting for OBD-II connection...
+2024-09-03 15:57:47,881: connecting to obd scanner bluetooth...
+2024-09-03 15:57:48,226: connecting...
+2024-09-03 15:57:53,430: pairing
+2024-09-03 15:57:53,518: trusting
+2024-09-03 15:57:53,594: connecting with the obd class
+2024-09-03 15:57:53,594: ======================= python-OBD (v0.7.2) =======================
+2024-09-03 15:57:53,595: Explicit port defined
+2024-09-03 15:57:53,596: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
+2024-09-03 15:57:58,721: Connection error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+2024-09-03 15:57:58,884: Failed to connect to OBD-II adapter, retrying in 60 seconds...
+2024-09-03 15:58:58,886: Waiting for OBD-II connection...
+2024-09-03 15:58:58,887: connecting to obd scanner bluetooth...
+2024-09-03 15:58:59,183: connecting...
+2024-09-03 15:59:04,385: pairing
+2024-09-03 15:59:04,478: trusting
+2024-09-03 15:59:04,552: connecting with the obd class
+2024-09-03 15:59:04,552: ======================= python-OBD (v0.7.2) =======================
+2024-09-03 15:59:04,553: Explicit port defined
+2024-09-03 15:59:04,553: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
+2024-09-03 15:59:09,678: Connection error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+2024-09-03 15:59:09,890: Failed to connect to OBD-II adapter, retrying in 60 seconds...
+2024-09-03 16:00:09,892: Waiting for OBD-II connection...
+2024-09-03 16:00:09,893: connecting to obd scanner bluetooth...
+2024-09-03 16:00:10,202: connecting...
+2024-09-03 16:00:15,414: pairing
+2024-09-03 16:00:15,507: trusting
+2024-09-03 16:00:15,575: connecting with the obd class
+2024-09-03 16:00:15,576: ======================= python-OBD (v0.7.2) =======================
+2024-09-03 16:00:15,577: Explicit port defined
+2024-09-03 16:00:15,577: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
+2024-09-03 16:00:20,702: Connection error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+2024-09-03 16:00:20,896: Failed to connect to OBD-II adapter, retrying in 60 seconds...
+2024-09-03 16:01:20,898: Waiting for OBD-II connection...
+2024-09-03 16:01:20,899: connecting to obd scanner bluetooth...
+2024-09-03 16:01:21,190: connecting...
+2024-09-03 16:01:26,393: pairing
+2024-09-03 16:01:26,485: trusting
+2024-09-03 16:01:26,555: connecting with the obd class
+2024-09-03 16:01:26,556: ======================= python-OBD (v0.7.2) =======================
+2024-09-03 16:01:26,557: Explicit port defined
+2024-09-03 16:01:26,558: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
+2024-09-03 16:01:31,682: Connection error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+2024-09-03 16:01:31,902: Failed to connect to OBD-II adapter, retrying in 60 seconds...
+2024-09-03 16:02:31,904: Waiting for OBD-II connection...
+2024-09-03 16:02:31,905: connecting to obd scanner bluetooth...
+2024-09-03 16:02:32,210: connecting...
+2024-09-03 16:02:32,504: pairing
+2024-09-03 16:02:32,569: trusting
+2024-09-03 16:02:32,635: connecting with the obd class
+2024-09-03 16:02:32,636: ======================= python-OBD (v0.7.2) =======================
+2024-09-03 16:02:32,637: Explicit port defined
+2024-09-03 16:02:32,637: Initializing ELM327: PORT=/dev/rfcomm0 BAUD=auto PROTOCOL=auto
+2024-09-03 16:02:32,785: Response from baud 38400: b'\x7f\x7f\r?\r\r>'
+2024-09-03 16:02:32,786: Choosing baud 38400
+2024-09-03 16:02:32,787: write: b'ATZ\r'
+2024-09-03 16:02:32,788: wait: 1 seconds
+2024-09-03 16:02:33,789: read: b'ATZ\r\r\rELM327 v2.3\r\r>'
+2024-09-03 16:02:33,791: write: b'ATE0\r'
+2024-09-03 16:02:33,811: read: b'ATE0\rOK\r\r>'
+2024-09-03 16:02:33,812: write: b'ATH1\r'
+2024-09-03 16:02:33,825: read: b'OK\r\r>'
+2024-09-03 16:02:33,826: write: b'ATL0\r'
+2024-09-03 16:02:33,861: read: b'OK\r\r>'
+2024-09-03 16:02:33,862: write: b'AT RV\r'
+2024-09-03 16:02:33,905: read: b'13.6V\r\r>'
+2024-09-03 16:02:33,906: write: b'ATSP0\r'
+2024-09-03 16:02:33,907: wait: 1 seconds
+2024-09-03 16:02:34,908: read: b'OK\r\r>'
+2024-09-03 16:02:34,909: write: b'0100\r'
+2024-09-03 16:02:34,910: wait: 1 seconds
+2024-09-03 16:02:40,040: read: b'SEARCHING...\r86 F1 10 41 00 98 1B 00 11 8C \r\r>'
+2024-09-03 16:02:40,041: write: b'ATDPN\r'
+2024-09-03 16:02:40,054: read: b'A5\r\r>'
+2024-09-03 16:02:40,055: map ECU 16 --> ENGINE
+2024-09-03 16:02:40,056: Connected Successfully: PORT=/dev/rfcomm0 BAUD=38400 PROTOCOL=5
+2024-09-03 16:02:40,057: querying for supported commands
+2024-09-03 16:02:40,059: Sending command: b'0100': Supported PIDs [01-20]
+2024-09-03 16:02:40,059: write: b'0100\r'
+2024-09-03 16:02:40,475: read: b'86 F1 10 41 00 98 1B 00 11 8C \r\r>'
+2024-09-03 16:02:40,478: Sending command: b'0120': Supported PIDs [21-40]
+2024-09-03 16:02:40,478: write: b'0120\r'
+2024-09-03 16:02:40,854: read: b'86 F1 10 41 20 A0 00 00 00 88 \r\r>'
+2024-09-03 16:02:40,856: Sending command: b'0900': Supported PIDs [01-20]
+2024-09-03 16:02:40,856: write: b'0900\r'
+2024-09-03 16:02:41,220: read: b'87 F1 10 49 00 01 30 00 00 00 02 \r\r>'
+2024-09-03 16:02:41,222: finished querying with 30 commands supported
+2024-09-03 16:02:41,223: ===================================================================
+2024-09-03 16:02:41,909: An error occurred: type object 'OBDStatus' has no attribute 'CONNECTED'
+2024-09-03 16:02:41,909: Cleaning up resources...
+2024-09-03 16:02:51,911: Program terminated gracefully.
