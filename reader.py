@@ -180,7 +180,7 @@ if __name__ == "__main__":
                     time.sleep(60)
                     continue
 
-                if obd_connection.is_connected(obd_connection):
+                if obd_connection.is_connected():
                     led_blue.value = 0.2
                     if is_car_on():
                         gather_informations(obd_connection, sql_connection)
