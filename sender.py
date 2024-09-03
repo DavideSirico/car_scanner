@@ -62,7 +62,7 @@ def monitor_and_send_data():
             logging.debug("connected!")
             led_green.on()
             send_data()
-            break  # Exit loop after successful data transfer
+            time.sleep(60)
         else:
             led_green.off()
             logging.warning("Waiting to connect to home Wi-Fi...")
