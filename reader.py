@@ -64,7 +64,8 @@ def gather_informations(obd_connection, sql_connection):
             sensor_data.append(None)
 
     logging.info("saving data")
-    sql_connection.execute(
+    cursor = sql_connection.cursor()
+    cursor.execute(
         "INSERT INTO obd_data (timestamp, " + ", ".join(SENSORS) + ") VALUES (datetime('now'), " + ", ".join(["?"] * len(SENSORS)) + ")", sensor_data
     )
     sql_connection.commit()
