@@ -71,6 +71,7 @@ def gather_informations(obd_connection, sql_connection):
 
 def shutdown(signum, frame):
     global running
+    logging.info("SHUTDOWN SIGN")
     running = False
 
 def blink_blue_led():
@@ -124,6 +125,8 @@ def connect_obd():
     
 def shutdown_button():
     global running
+    logging.info("SHUTDOWN SWITCH")
+
     running = False
 
 if __name__ == "__main__":
@@ -148,8 +151,13 @@ if __name__ == "__main__":
         obd_connection = None
 
         while running:
+            if not running:
+                break
+
             # controllo se sono connesso all'obd
             while obd_connection == None or obd_connection.status() == obd.OBDStatus.NOT_CONNECTED:
+                if not running:
+                    break  # Exit the loop if shutdown signal is received
                 obd_connection = connect_obd()
                 if not obd_connection or obd_connection.status() != obd.OBDStatus.CONNECTED:
                     led_blue.off()
