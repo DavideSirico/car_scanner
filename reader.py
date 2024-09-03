@@ -77,7 +77,7 @@ def shutdown(signum, frame):
 
 def blink_blue_led():
     while blinking:
-        led_blue.value = 0.5
+        led_blue.value = 0.2
         time.sleep(0.5)
         led_blue.off()
         time.sleep(0.5)
@@ -178,11 +178,12 @@ if __name__ == "__main__":
                     continue
 
                 if obd_connection.is_connected(obd_connection):
-                    led_blue.value = 0.5
+                    led_blue.value = 0.2
                     if is_car_on():
                         gather_informations(obd_connection, sql_connection)
                     logging.info(f"waiting for {SCANNING_INTERVALL}")
                     time.sleep(SCANNING_INTERVALL)
+                
     except Exception as e:
         logging.error(f"An error occurred: {e}")
     finally:
