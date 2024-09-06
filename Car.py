@@ -2,6 +2,7 @@ import logging
 
 import obd
 
+
 class Car:
     def __init__(self, obd_connection: obd.OBD):
         self.obd_connection = obd_connection

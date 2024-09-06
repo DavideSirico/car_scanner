@@ -4,8 +4,9 @@ import threading
 
 import sqlite3
 
+from Led import Led
 class DB:
-    def __init__(self, db_path: str, sensors: list):
+    def __init__(self, db_path: str, sensors: list, led_green: Led):
         logging.info("connecting to SQL...")
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
@@ -18,9 +19,11 @@ class DB:
         self.db_path = db_path
         self.lock = threading.Lock()
         self.sensors = sensors
+        self.led_green = led_green
     
     def send_db(self, server_addr: str, server_db_path: str, server_user: str):
-        with self.lock:    
+        with self.lock:
+            self.led_green.start_blinking(0.5)
             logging.debug("sending database to server...")
             try:
                 output = subprocess.run(["scp", self.db_path, f"{server_user}@{server_addr}:{server_db_path}"], capture_output=True)
@@ -30,6 +33,8 @@ class DB:
                 logging.info("Data sent successfully.")
             except Exception as e:
                 logging.error(f"Failed to send data: {e}")
+            finally:
+                self.led_green.stop_blinking()
 
     def insert_data_sensors(self, sensors_data: list):
         with self.lock:

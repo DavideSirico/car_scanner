@@ -1,5 +1,4 @@
 import logging
-import sqlite3
 import threading
 import time
 import subprocess 
@@ -13,30 +12,35 @@ from Led import Led
 
 import gpiozero
 
-
-
-
 stop_event = threading.Event()
 
-
-def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensors: list):
+def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensors: list, server_addr: str, router_addr: str, server_db_path: str, server_user: str, led_blue: Led):
     while not stop_event.is_set():
         # check if the car is on and the obd is connected, start monitoring the sensors every 10 seconds
         if car.is_car_on() and obd_conn.is_connected():
+            led_blue.on()
             sensors_data = car.read_sensors(sensors)
             db.insert_data_sensors(sensors_data)
+            send_wifi_db(router_addr, db, server_addr, server_db_path, server_user)
             time.sleep(scanning_interval)
         else:
+            # if the car is off but the obd is connected, disconnect the obd to let it sleep
             if obd_conn.is_connected():
+                led_blue.start_blinking(0.5)
                 obd_conn.disconnect_obd()
                 obd_conn.disconnect_bluetooth()
+                led_blue.stop_blinking()
+            # the the car is off and the obd is disconnected try every 5 minutes to reconnect
             while not obd_conn.is_connected() and not car.is_car_on():
+                led_blue.off()
                 if not stop_event.is_set():
+                    led_blue.start_blinking(0.1)
                     obd_conn.connect_bluetooth()
+                    led_blue.stop_blinking()
                     time.sleep(300)
                 else:
-                    break
-
+                    return
+        
         time.sleep(2)
 
 def connected_to_wifi(addr: str):
@@ -50,10 +54,8 @@ def connected_to_wifi(addr: str):
         return False
 
 def send_wifi_db(router_addr: str, db: DB, server_addr: str, server_db_path: str, server_user: str):
-    while not stop_event.is_set():
-        if connected_to_wifi(router_addr):
-            db.send_db(server_addr, server_db_path, server_user)
-
+    if connected_to_wifi(router_addr):
+        db.send_db(server_addr, server_db_path, server_user)
 
 def shutdown(switch_pin: int):
     # check switch status
@@ -91,12 +93,12 @@ def main():
     SWITCH = config["SWITCH"]
 
 
-    led_red = Led(LED_RED)
-    led_green = Led(LED_GREEN)
-    led_blue = Led(LED_BLUE)
+    led_red = Led(LED_RED, "red")
+    led_green = Led(LED_GREEN, "green")
+    led_blue = Led(LED_BLUE, "blue")
 
-    db = DB(LOCAL_DB_PATH, SENSORS)
-    obd_conn = OBD(MAC_ADDR)
+    db = DB(LOCAL_DB_PATH, SENSORS, led_green)
+    obd_conn = OBD(MAC_ADDR, led_blue)
     car = Car(obd_conn)
 
 
@@ -108,19 +110,29 @@ def main():
     global stop_event
     stop_event = threading.Event()
 
-    monitoring_thread = threading.Thread(target=monitoring, args=(car, obd_conn, db, SCANNING_INTERVAL, SENSORS))
-    sending_thread = threading.Thread(target=send_wifi_db, args=(ROUTER_ADDR, SERVER_ADDR, SERVER_DB_PATH, SERVER_USER))
+    monitoring_thread = threading.Thread(target=monitoring, args=(car, obd_conn, db, SCANNING_INTERVAL, SENSORS, SERVER_ADDR, ROUTER_ADDR, SERVER_DB_PATH, SERVER_USER, led_blue, led_green))
     shutdown_thread = threading.Thread(target=shutdown, args=(SWITCH))
 
     monitoring_thread.start()
-    sending_thread.start()
     shutdown_thread.start()
 
+    led_red.on()
 
     monitoring_thread.join()
-    sending_thread.join()
     shutdown_thread.join()
+
+
+    db.connection.close()
+    obd_conn.disconnect_obd()
+    obd_conn.disconnect_bluetooth()
+    led_red.off()
+    led_green.off()
+    led_blue.off()
+
+    logging.info("END OF PROGRAM")
+    subprocess.run(["shutdown", "-h", "now"])
 
 
 if __name__ == "__main__":
     main()
+

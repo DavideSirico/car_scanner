@@ -33,8 +33,9 @@ class Led:
                 return  # Don't start a new thread if already blinking
             self.blinking = True
             self.blink_interval = blink_interval
-
-
+            
+        # get current state of the LED
+        self.was_on = self.led.is_lit
         # Start the blinking in a separate thread
         self.thread = threading.Thread(target=self._blink)
         self.thread.start()
@@ -49,6 +50,10 @@ class Led:
         if self.thread:
             self.thread.join()
             self.thread = None
+            if self.was_on:
+                self.led.on()
+            else:
+                self.led.off()
     
     def turn_on(self, intensity: int = 1):
         with self.lock:
