@@ -38,7 +38,7 @@ def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensor
                 logging.debug("obd is disconnected")
             # the the car is off and the obd is disconnected try every 5 minutes to reconnect
             while not obd_conn.is_connected() and not car.is_car_on():
-                time.sleep(300)
+                time.sleep(15)
                 logging.debug("car is off and obd is disconnected")
                 led_blue.turn_off()
                 if not stop_event.is_set():
@@ -81,7 +81,7 @@ def main():
     # setup logging
     # sys.stderr = open("stderr.log", "a")
     # sys.stdout = open("stdout.log", "a")
-    logging.basicConfig(stream=sys.stdout, format='{levelname}-%(asctime)s: %(message)s', level=logging.DEBUG)
+    logging.basicConfig(stream=sys.stdout, format='%(levelname)-%(asctime)s: %(message)s', level=logging.DEBUG)
     
     # Load the configuration
     config = load_config('config.json')
