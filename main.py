@@ -94,7 +94,7 @@ def main():
 
     db = DB(LOCAL_DB_PATH, SENSORS, led_green)
     obd_conn = OBD(MAC_ADDR, led_blue)
-    car = Car(obd_conn)
+    car = Car(obd_conn, led_blue)
 
 
     # 3 threads 
