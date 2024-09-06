@@ -21,6 +21,8 @@ class OBD:
             if output.returncode != 0 or output.returncode != 1:
                 logging.error(f"{cmd} failed: {output.stderr.decode('utf-8')}")
 
+        self.obd_connection = None
+
     def connect_bluetooth(self):
         logging.info("Waiting for OBD-II connection...")
         try:
@@ -72,16 +74,21 @@ class OBD:
             self.led_blue.stop_blinking()
 
     def status(self):
+        if self.obd_connection is None:
+            return False
         return self.obd_connection.status()
 
     def disconnect_obd(self):
         try:
             logging.info("disconnecting with the obd class")
-            self.obd_connection.close()
+            if self.obd_connection is not None:
+                self.obd_connection.close()
         except Exception as e:
             logging.error(f"Connection error: {e}")
         finally:
             self.led_blue.off()
     
     def is_connected(self):
+        if self.obd_connection is None:
+            return False
         return self.obd_connection.is_connected()
