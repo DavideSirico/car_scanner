@@ -26,17 +26,13 @@ def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensor
         else:
             # if the car is off but the obd is connected, disconnect the obd to let it sleep
             if obd_conn.is_connected():
-                led_blue.start_blinking(0.5)
                 obd_conn.disconnect_obd()
                 obd_conn.disconnect_bluetooth()
-                led_blue.stop_blinking()
             # the the car is off and the obd is disconnected try every 5 minutes to reconnect
             while not obd_conn.is_connected() and not car.is_car_on():
                 led_blue.off()
                 if not stop_event.is_set():
-                    led_blue.start_blinking(0.1)
                     obd_conn.connect_bluetooth()
-                    led_blue.stop_blinking()
                     time.sleep(300)
                 else:
                     return

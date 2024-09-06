@@ -1,11 +1,14 @@
 import logging
 
+from Led import Led
+
 import obd
 
 
 class Car:
-    def __init__(self, obd_connection: obd.OBD):
+    def __init__(self, obd_connection: obd.OBD, led_blue: Led):
         self.obd_connection = obd_connection
+        self.led_blue = led_blue
 
     def is_car_on(self):
         try:
@@ -13,11 +16,13 @@ class Car:
                 logging.info("checking if the car is responding...")
                 response = self.obd_connection.query(obd.commands.RPM)
                 if response is not None and response.value is not None:
+                    self.led_blue.turn_on()
                     logging.debug("Car is on and connected")
                     return True
                 logging.debug("Car is not responding")
             else:
                 logging.debug("OBD connection is not connected")
+                self.led_blue.turn_off()
         except Exception as e:
             logging.error(f"An error occurred: {e}")
         

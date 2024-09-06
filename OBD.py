@@ -1,10 +1,12 @@
 import subprocess
 import logging
 
+from Led import Led
+
 import obd
 
 class OBD:
-    def __init__(self, mac_address: str):
+    def __init__(self, mac_address: str, led_blue: Led):
         self.mac_address = mac_address
         cmds = [
             f"rfcomm bind hci0 {self.mac_address}",
@@ -13,7 +15,7 @@ class OBD:
             "bluetoothctl agent on",
             "bluetoothctl default-agent"
         ]
-
+        self.led_blue = led_blue
         for cmd in cmds:
             output = subprocess.run(cmd.split(), capture_output=True)
             if output.returncode != 0:
@@ -22,6 +24,7 @@ class OBD:
     def connect_bluetooth(self):
         logging.info("Waiting for OBD-II connection...")
         try:
+            self.led_blue.start_blinking(0.5)
             logging.debug("connecting to obd scanner bluetooth...")
 
             output = subprocess.run(["bluetoothctl", "connect", self.mac_address], capture_output=True)
@@ -43,6 +46,8 @@ class OBD:
 
         except Exception as e:
             logging.error(f"Connection error: {e}")
+        finally:
+            self.led_blue.stop_blinking()
     
     def disconnect_bluetooth(self):
         try:
@@ -53,13 +58,18 @@ class OBD:
         except Exception as e:
             logging.error(f"Connection error: {e}")
             return None
+        finally:
+            self.led_blue.off()
     
     def connect_obd(self):
         try:
+            self.led_blue.start_blinking(0.5)
             logging.info("connecting with the obd class")
             self.obd_connection = obd.OBD("/dev/rfcomm0")
         except Exception as e:
             logging.error(f"Connection error: {e}")
+        finally:
+            self.led_blue.stop_blinking()
 
     def status(self):
         return self.obd_connection.status()
@@ -70,3 +80,5 @@ class OBD:
             self.obd_connection.close()
         except Exception as e:
             logging.error(f"Connection error: {e}")
+        finally:
+            self.led_blue.off()
