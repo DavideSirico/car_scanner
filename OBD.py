@@ -82,3 +82,6 @@ class OBD:
             logging.error(f"Connection error: {e}")
         finally:
             self.led_blue.off()
+    
+    def is_connected(self):
+        return self.obd_connection.is_connected()
