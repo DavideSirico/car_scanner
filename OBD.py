@@ -19,6 +19,7 @@ class OBD:
         for cmd in cmds:
             output = subprocess.run(cmd.split(), capture_output=True)
             if output.returncode != 0:
+                logging.error(f"{cmd} failed: {output.stderr.decode('utf-8')}")
                 raise Exception(f"{cmd} failed: {output.stderr.decode('utf-8')}")
 
     def connect_bluetooth(self):
