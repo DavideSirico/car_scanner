@@ -182,12 +182,14 @@ if __name__ == "__main__":
                     continue
 
             if obd_connection.is_connected():
+                led_red.value = 0.5
                 led_blue.value = 0.2
                 if is_car_on(obd_connection):
                     gather_informations(obd_connection, sql_connection)
                 else:
                     obd_connection.close()
                     led_blue.off()
+                    led_red.off()
                     time.sleep(300)
                 logging.info(f"waiting for {SCANNING_INTERVALL}")
                 time.sleep(SCANNING_INTERVALL)
