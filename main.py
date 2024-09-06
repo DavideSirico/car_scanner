@@ -18,7 +18,7 @@ def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensor
     while not stop_event.is_set():
         # check if the car is on and the obd is connected, start monitoring the sensors every 10 seconds
         if car.is_car_on() and obd_conn.is_connected():
-            led_blue.on()
+            led_blue.turn_on()
             sensors_data = car.read_sensors(sensors)
             db.insert_data_sensors(sensors_data)
             send_wifi_db(router_addr, db, server_addr, server_db_path, server_user)
@@ -30,7 +30,7 @@ def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensor
                 obd_conn.disconnect_bluetooth()
             # the the car is off and the obd is disconnected try every 5 minutes to reconnect
             while not obd_conn.is_connected() and not car.is_car_on():
-                led_blue.off()
+                led_blue.turn_off()
                 if not stop_event.is_set():
                     obd_conn.connect_bluetooth()
                     time.sleep(300)
@@ -111,7 +111,7 @@ def main():
     monitoring_thread.start()
     shutdown_thread.start()
 
-    led_red.on()
+    led_red.turn_on()
 
     monitoring_thread.join()
     shutdown_thread.join()
@@ -120,9 +120,9 @@ def main():
     db.connection.close()
     obd_conn.disconnect_obd()
     obd_conn.disconnect_bluetooth()
-    led_red.off()
-    led_green.off()
-    led_blue.off()
+    led_red.turn_off()
+    led_green.turn_off()
+    led_blue.turn_off()
 
     logging.info("END OF PROGRAM")
     subprocess.run(["shutdown", "-h", "now"])
