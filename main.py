@@ -119,7 +119,7 @@ def main():
     stop_event = threading.Event()
 
     monitoring_thread = threading.Thread(target=monitoring, args=(car, obd_conn, db, SCANNING_INTERVAL, SENSORS, SERVER_ADDR, ROUTER_ADDR, SERVER_DB_PATH, SERVER_USER, led_blue))
-    shutdown_thread = threading.Thread(target=shutdown, args=(SWITCH))
+    shutdown_thread = threading.Thread(target=shutdown, args=(SWITCH,...))
 
     monitoring_thread.start()
     shutdown_thread.start()
