@@ -1,0 +1,20 @@
+{
+    
+    "SCANNING_INTERVALL": 10, 
+    "SENSORS": ["ENGINE_LOAD", "COOLANT_TEMP", "FUEL_PRESSURE", "INTAKE_PRESSURE", "SPEED",
+            "INTAKE_TEMP", "MAF", "THROTTLE_POS", "RUN_TIME", "FUEL_LEVEL",
+            "CATALYST_TEMP_B1S1", "CATALYST_TEMP_B2S1", "CATALYST_TEMP_B1S2",
+            "CATALYST_TEMP_B2S2", "RELATIVE_THROTTLE_POS", "AMBIANT_AIR_TEMP",
+            "RELATIVE_ACCEL_POS", "FUEL_RATE"],
+
+    "MAC_ADDR": "13:E0:2F:8D:54:A9",
+    "SERVER_ADDR": "192.168.1.100",
+    "ROUTER_ADDR": "192.168.1.128",
+    "SERVER_DB_PATH": "/home/david/car_scanner",
+    "LOCAL_DB_PATH": "/home/david/car_scanner/obd_data.db",
+    "SERVER_USER": "david",
+    "LED_GREEN": 24,
+    "LED_RED": 16,
+    "LED_BLUE": 6,
+    "SWITCH": 3
+}

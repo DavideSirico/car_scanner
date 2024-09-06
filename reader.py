@@ -1,13 +1,15 @@
 import logging
 import os
-import obd
-import time
+import signal
+import socket
 import sqlite3
 import subprocess
 import sys
-import gpiozero
 import threading
-import signal
+import time
+
+import gpiozero
+import obd
 
 DB_PATH = "/home/david/car_scanner/obd_data.db"
 SCANNING_INTERVALL = 10 # in seconds 
@@ -22,10 +24,17 @@ MAC_ADDR = "13:E0:2F:8D:54:A9"
 
 LED_RED = 16
 LED_BLUE = 6
+SERVER_ADDR = "192.168.1.100"
+ROUTER_ADDR = "192.168.1.128"
+SERVER_DB_PATH = "/home/david/car_scanner"
+LOCAL_DB_PATH = "/home/david/car_scanner/obd_data.db"
+SERVER_USER = "david"
+LED_GREEN = 24
 SWITCH = 3
 
 running = True
 
+led_green = gpiozero.PWMLED(LED_GREEN)
 led_red = gpiozero.PWMLED(LED_RED)
 led_blue = gpiozero.PWMLED(LED_BLUE)
 switch = gpiozero.Button(SWITCH)
@@ -50,7 +59,6 @@ def is_car_on(obd_connection):
 
 def gather_informations(obd_connection, sql_connection):
     logging.info("Monitoring car engine status...")
-
         
     sensor_data = []
 
@@ -125,6 +133,13 @@ def connect_obd():
         blinking = False
         blink_thread.join()
     
+def blink_green_led():
+    while blinking:
+        led_green.on()
+        time.sleep(0.5)
+        led_green.off()
+        time.sleep(0.5)
+
 
 def blink_red_led():
     while not running:
@@ -139,6 +154,50 @@ def shutdown_button():
     blink_thread = threading.Thread(target=blink_red_led)
     blink_thread.start()
     running = False
+
+def monitor_and_send_data():
+    logging.info("monitoring and sending data")
+    while True:
+        logging.debug("checking if the rasp is connected to wifi")
+        if is_wifi_connected():
+            logging.debug("connected!")
+            led_green.on()
+            send_data()
+            led_green.on()
+            time.sleep(60)
+        else:
+            led_green.off()
+            logging.warning("Waiting to connect to home Wi-Fi...")
+        time.sleep(15)  # Check every 15 seconds
+
+def is_wifi_connected():
+    logging.debug("sending a packet to 192.168.1.128 on port 53")
+    try:
+        socket.setdefaulttimeout(3)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ROUTER_ADDR, 53))
+        logging.info("raspb is connected to home wifi")
+        return True
+    except socket.error as ex:
+        logging.warning(ex)
+        return False
+    
+
+def send_data():
+    global blinking
+
+    blinking = True
+    blink_thread = threading.Thread(target=blink_green_led)
+    blink_thread.start()
+
+    try:
+        logging.info("Sending data to server...")
+        os.system(f"scp {LOCAL_DB_PATH} {SERVER_USER}@{SERVER_ADDR}:{SERVER_DB_PATH}")
+        logging.info("Data sent successfully.")
+    except Exception as e:
+        logging.error(f"Failed to send data: {e}")
+    finally:
+        blinking = False
+        blink_thread.join()
 
 if __name__ == "__main__":
     try:
@@ -160,6 +219,9 @@ if __name__ == "__main__":
         
         os.system(f"/bin/bash -c \"rfcomm bind hci0 {MAC_ADDR}\"")
         obd_connection = None
+
+        thread = threading.Thread(target = monitor_and_send_data)
+        thread.start()
 
         while running:
             if not running:
@@ -198,9 +260,9 @@ if __name__ == "__main__":
         logging.error(f"An error occurred: {e}")
     finally:
         logging.info("Cleaning up resources...")
+        thread.join()
         led_red.off()
         sql_connection.close()
         time.sleep(10)
         logging.info("Program terminated gracefully.")
-
         os.system("shutdown -h now")
