@@ -18,7 +18,7 @@ class OBD:
         self.led_blue = led_blue
         for cmd in cmds:
             output = subprocess.run(cmd.split(), capture_output=True)
-            if output.returncode != 0:
+            if output.returncode != 0 or output.returncode != 1:
                 logging.error(f"{cmd} failed: {output.stderr.decode('utf-8')}")
                 raise Exception(f"{cmd} failed: {output.stderr.decode('utf-8')}")
 
