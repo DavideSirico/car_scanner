@@ -1,1 +1,3 @@
 .venv
+obd_data.db
+__pycache__
