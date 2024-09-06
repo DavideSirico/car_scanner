@@ -68,8 +68,8 @@ def send_wifi_db(router_addr: str, db: DB, server_addr: str, server_db_path: str
 
 def shutdown(switch_pin: int):
     # check switch status
-    switch = gpiozero.Button(switch_pin)
-    switch.wait_for_press()
+    # switch = gpiozero.Button(switch_pin)
+    # switch.wait_for_press()
     stop_event.set()
 
 def load_config(filename):
@@ -119,15 +119,17 @@ def main():
     stop_event = threading.Event()
 
     monitoring_thread = threading.Thread(target=monitoring, args=(car, obd_conn, db, SCANNING_INTERVAL, SENSORS, SERVER_ADDR, ROUTER_ADDR, SERVER_DB_PATH, SERVER_USER, led_blue))
-    shutdown_thread = threading.Thread(target=shutdown, args=(SWITCH,))
-
+    # shutdown_thread = threading.Thread(target=shutdown, args=(SWITCH,))
+    
+    switch = gpiozero.Button(SWITCH)
+    switch.when_released = shutdown
     monitoring_thread.start()
-    shutdown_thread.start()
+    # shutdown_thread.start()
 
     led_red.turn_on()
 
     monitoring_thread.join()
-    shutdown_thread.join()
+    # shutdown_thread.join()
 
 
     db.connection.close()
