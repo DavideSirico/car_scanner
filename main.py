@@ -17,26 +17,39 @@ stop_event = threading.Event()
 def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensors: list, server_addr: str, router_addr: str, server_db_path: str, server_user: str, led_blue: Led):
     while not stop_event.is_set():
         # check if the car is on and the obd is connected, start monitoring the sensors every 10 seconds
+        logging.debug("checking if the car is on and the obd is connected")
         if car.is_car_on() and obd_conn.is_connected():
+            logging.debug("car is on and obd is connected")
             led_blue.turn_on()
+            logging.debug("read sensors")
             sensors_data = car.read_sensors(sensors)
+            logging.debug("insert data into the db")
             db.insert_data_sensors(sensors_data)
+            logging.debug("send data to server")
             send_wifi_db(router_addr, db, server_addr, server_db_path, server_user)
+            logging.debug("wait")
             time.sleep(scanning_interval)
         else:
             # if the car is off but the obd is connected, disconnect the obd to let it sleep
             if obd_conn.is_connected():
+                logging.debug("car is off and obd is connected")
                 obd_conn.disconnect_obd()
                 obd_conn.disconnect_bluetooth()
+                logging.debug("obd is disconnected")
             # the the car is off and the obd is disconnected try every 5 minutes to reconnect
             while not obd_conn.is_connected() and not car.is_car_on():
+                time.sleep(300)
+                logging.debug("car is off and obd is disconnected")
                 led_blue.turn_off()
                 if not stop_event.is_set():
+                    logging.debug("try to reconnect")
                     obd_conn.connect_bluetooth()
-                    time.sleep(300)
+                    obd_conn.connect_obd()
+                    logging.debug("obd is connected")
                 else:
                     return
-        
+                
+        logging.debug("main loop waiting")
         time.sleep(2)
 
 def connected_to_wifi(addr: str):
@@ -68,7 +81,7 @@ def main():
     # setup logging
     # sys.stderr = open("stderr.log", "a")
     # sys.stdout = open("stdout.log", "a")
-    logging.basicConfig(stream=sys.stdout, format='%(asctime)s: %(message)s', level=logging.DEBUG)
+    logging.basicConfig(stream=sys.stdout, format='{levelname}-%(asctime)s: %(message)s', level=logging.DEBUG)
     
     # Load the configuration
     config = load_config('config.json')
