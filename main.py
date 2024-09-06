@@ -66,10 +66,9 @@ def load_config(filename):
 
 def main():
     # setup logging
-    sys.stderr = open("stderr.log", "a")
-    sys.stdout = open("stdout.log", "a")
-    logging.basicConfig(filename='reader.log', format='%(asctime)s: %(message)s',
-                    level=logging.DEBUG)
+    # sys.stderr = open("stderr.log", "a")
+    # sys.stdout = open("stdout.log", "a")
+    logging.basicConfig(stream=sys.stdout, format='%(asctime)s: %(message)s', level=logging.DEBUG)
     
     # Load the configuration
     config = load_config('config.json')
