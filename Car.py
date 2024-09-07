@@ -29,7 +29,7 @@ class Car:
         return False
     def read_sensor(self, sensor: str):
         logging.debug(f"reading {sensor}:")
-        res = self.obd_connection.query(getattr(obd.commands, sensor), force=True)
+        res = self.obd_connection.query(getattr(obd.commands, sensor))
         if res.value is not None: 
             logging.debug(res.value.magnitude)
         return res
