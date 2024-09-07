@@ -12,7 +12,7 @@ class Led:
         self.lock = threading.Lock()  # Add a lock for thread-safety
         self.default_intensity = intensity
 
-    def _blink(self, intensity: None):
+    def _blink(self, intensity = None):
          while True:
             with self.lock:
                 if not self.blinking:
