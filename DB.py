@@ -8,7 +8,7 @@ from Led import Led
 class DB:
     def __init__(self, db_path: str, sensors: list, led_green: Led):
         logging.info("connecting to SQL...")
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(db_path, check_same_thread=False)
         c = conn.cursor()
         query = " REAL, ".join(x for x in sensors) + " REAL)"
         query = "CREATE TABLE IF NOT EXISTS obd_data (timestamp DATE DEFAULT (datetime('now','localtime')), " + query

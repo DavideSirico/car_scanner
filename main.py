@@ -14,7 +14,7 @@ import gpiozero
 
 stop_event = threading.Event()
 
-def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensors: list, server_addr: str, router_addr: str, server_db_path: str, server_user: str, led_blue: Led):
+def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensors: list, server_addr: str, router_addr: str, server_db_path: str, server_user: str, led_blue: Led, led_green: Led):
     while not stop_event.is_set():
         # check if the car is on and the obd is connected, start monitoring the sensors every 10 seconds
         logging.debug("checking if the car is on and the obd is connected")
@@ -26,7 +26,7 @@ def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensor
             logging.debug("insert data into the db")
             db.insert_data_sensors(sensors_data)
             logging.debug("send data to server")
-            send_wifi_db(router_addr, db, server_addr, server_db_path, server_user)
+            send_wifi_db(router_addr, db, server_addr, server_db_path, server_user, led_green)
             logging.debug("wait")
             time.sleep(scanning_interval)
         else:
@@ -38,6 +38,7 @@ def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensor
                 logging.debug("obd is disconnected")
             # the the car is off and the obd is disconnected try every 5 minutes to reconnect
             while not obd_conn.is_connected() and not car.is_car_on():
+                logging.debug("waiting 15 seconds")
                 time.sleep(15)
                 logging.debug("car is off and obd is disconnected")
                 led_blue.turn_off()
@@ -62,9 +63,12 @@ def connected_to_wifi(addr: str):
         logging.error(f"Connection error: {e}")
         return False
 
-def send_wifi_db(router_addr: str, db: DB, server_addr: str, server_db_path: str, server_user: str):
+def send_wifi_db(router_addr: str, db: DB, server_addr: str, server_db_path: str, server_user: str, led_green: Led):
     if connected_to_wifi(router_addr):
+        led_green.turn_on()
         db.send_db(server_addr, server_db_path, server_user)
+    else:
+        led_green.turn_off()
 
 def shutdown(switch_pin: int):
     # check switch status
@@ -118,7 +122,7 @@ def main():
     global stop_event
     stop_event = threading.Event()
 
-    monitoring_thread = threading.Thread(target=monitoring, args=(car, obd_conn, db, SCANNING_INTERVAL, SENSORS, SERVER_ADDR, ROUTER_ADDR, SERVER_DB_PATH, SERVER_USER, led_blue))
+    monitoring_thread = threading.Thread(target=monitoring, args=(car, obd_conn, db, SCANNING_INTERVAL, SENSORS, SERVER_ADDR, ROUTER_ADDR, SERVER_DB_PATH, SERVER_USER, led_blue, led_green))
     # shutdown_thread = threading.Thread(target=shutdown, args=(SWITCH,))
     
     switch = gpiozero.Button(SWITCH)
@@ -146,3 +150,6 @@ def main():
 if __name__ == "__main__":
     main()
 
+# TODO:
+# - intensity of the leds
+# - db errors
