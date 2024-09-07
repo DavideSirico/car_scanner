@@ -34,7 +34,7 @@ class DB:
                 CREATE TABLE IF NOT EXISTS obd_data (
                     timestamp DATE DEFAULT (datetime('now', 'localtime')),
                     {sensor_columns}
-                    {calculated_values_columns},
+                    {calculated_values_columns}
                 )
             """
 
