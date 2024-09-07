@@ -19,7 +19,7 @@ class OBD:
         for cmd in cmds:
             output = subprocess.run(cmd.split(), capture_output=True)
             if output.returncode != 0 or output.returncode != 1:
-                logging.error(f"{cmd} failed: {output.stderr.decode('utf-8')}")
+                logging.error(f"{cmd} failed: {output.stderr.decode('utf-8')}, {output.stout.decode('utf-8')},{output.returncode}")
 
         self.obd_connection = None
 
