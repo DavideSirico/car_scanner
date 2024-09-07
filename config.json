@@ -13,5 +13,5 @@
     "LED_BLUE": 6,
     "SWITCH": 3,
     "GEAR_RATIOS": ["3.45", "1.87", "1.15", "0.82", "0.66"],
-    "TIRE_RADIUS": ""
+    "TIRE_RADIUS": "7.5"
 }

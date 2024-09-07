@@ -22,10 +22,10 @@ class Car:
                 logging.debug("Car is not responding")
             else:
                 logging.debug("OBD connection is not connected")
-                self.led_blue.turn_off()
         except Exception as e:
             logging.error(f"An error occurred: {e}")
         
+        self.led_blue.turn_off()
         return False
     def read_sensor(self, sensor: str):
         logging.debug(f"reading {sensor}:")
@@ -34,16 +34,12 @@ class Car:
             logging.debug(res.value.magnitude)
         return res
     
-    def read_sensors(self, sensors: list):
-        sensor_data = []
-
+    def read_sensors(self, sensors: dict):
         for sensor in sensors:
             res = self.read_sensor(sensor)        
             if res.value is not None: 
-                sensor_data.append(res.value.magnitude)
+                sensors[sensor] = res.value.magnitude
             else:
-                sensor_data.append(None)
+                sensors[sensor] = None
 
-        return sensor_data
-
-    
+        return sensors

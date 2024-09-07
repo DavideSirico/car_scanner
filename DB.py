@@ -6,16 +6,11 @@ import sqlite3
 
 from Led import Led
 class DB:
-    def __init__(self, local_db_path: str, router_addr: str, server_addr: str, server_db_path: str, server_user: str, sensors: list, calculated_values: list, led_green: Led):
+    def __init__(self, server_properties: dict, sensors: dict, calculated_values: dict, led_green: Led):
         logging.info("Connecting to the SQL database...")
         
         # Store the provided parameters
-        self.local_db_path = local_db_path
-        self.router_addr = router_addr
-        self.server_addr = server_addr
-        self.server_db_path = server_db_path
-        self.server_user = server_user
-        self.sensors = sensors
+        self.server_properties = server_properties
         self.calculated_values = calculated_values
         self.led_green = led_green
         
@@ -24,7 +19,7 @@ class DB:
 
         # Establish a connection to the SQLite database
         try:
-            self.connection = sqlite3.connect(self.local_db_path, check_same_thread=False)
+            self.connection = sqlite3.connect(self.server_properties["local_db_path"], check_same_thread=False)
             c = self.connection.cursor()
 
             # Create the table with dynamic sensor columns
@@ -49,7 +44,7 @@ class DB:
             self.led_green.start_blinking(0.5)
             logging.debug("sending database to server...")
             try:
-                output = subprocess.run(["scp", self.db_path, f"{self.server_user}@{self.server_addr}:{self.server_db_path}"], capture_output=True)
+                output = subprocess.run(["scp", self.server_properties["db_path"], f"{self.server_properties["server_user"]}@{self.server_properties["server_addr"]}:{self.server_properties["server_db_path"]  }"], capture_output=True)
                 if output.returncode != 0:
                     logging.error(f"Failed to send data: {output.stderr.decode('utf-8')}")
                     return
@@ -60,7 +55,7 @@ class DB:
                 self.led_green.stop_blinking()
     def _connected_to_wifi(self):
         try:
-            output = subprocess.run(["ping", "-c", "1", self.server_addr], capture_output=True)
+            output = subprocess.run(["ping", "-c", "1", self.server_properties["server_addr"]], capture_output=True)
             if output.returncode == 0:
                 return True
             return False
@@ -74,16 +69,16 @@ class DB:
             self._send_db()
         else:
             self.led_green.turn_off()
-    def insert_data_sensors(self, sensors_data: list, calculated_values_data: list):
+    def insert_data_sensors(self, sensors: dict, calculated_values: dict):
         with self.lock:
             try:
                 logging.info("Saving sensor and calculated data...")
 
                 # Combine sensors and calculated values into a single dataset
-                data_to_insert = sensors_data + calculated_values_data
+                data_to_insert = list(sensors.values()) + list(calculated_values.values())
 
                 # Prepare SQL query to insert data for both sensors and calculated values
-                all_columns = self.sensors + self.calculated_values
+                all_columns = list(sensors.keys()) + list(calculated_values.keys())
                 placeholders = ", ".join(["?"] * len(all_columns))
                 
                 query = f"""
