@@ -1,12 +1,12 @@
 import logging
 
 from Led import Led
+from OBD import OBD
 
 import obd
 
-
 class Car:
-    def __init__(self, obd_connection: obd.OBD, led_blue: Led):
+    def __init__(self, obd_connection: OBD, led_blue: Led):
         self.obd_connection = obd_connection
         self.led_blue = led_blue
 

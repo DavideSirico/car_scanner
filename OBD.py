@@ -92,3 +92,9 @@ class OBD:
         if self.obd_connection is None:
             return False
         return self.obd_connection.is_connected()
+    
+    def query(self, command):
+        if self.obd_connection is not None and self.obd_connection.is_connected():
+            return self.obd_connection.query(command, force=True)
+        else:
+            return None
