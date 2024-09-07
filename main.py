@@ -4,6 +4,7 @@ import time
 import subprocess 
 import sys
 import json 
+import math
 
 from Car import Car
 from OBD import OBD
@@ -14,7 +15,18 @@ import gpiozero
 
 stop_event = threading.Event()
 
-def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensors: list, server_addr: str, router_addr: str, server_db_path: str, server_user: str, led_blue: Led, led_green: Led):
+def estimate_gear(speed, rpm, tire_radius, gear_ratios):
+    speed_m_s = speed * (1000 / 3600)
+    # Calculate the gear ratio
+    gear_ratio = (rpm * tire_radius * 2 * math.pi) / (speed_m_s * 60)
+    
+    # Find the closest matching gear ratio from known gear ratios
+    closest_gear = min(gear_ratios, key=lambda x: abs(x - gear_ratio))
+    
+    return gear_ratios.index(closest_gear) + 1  # Return the gear number
+
+
+def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensors: list, led_blue: Led, TIRE_RADIUS: float, GEAR_RATIOS: list):
     while not stop_event.is_set():
         # check if the car is on and the obd is connected, start monitoring the sensors every 10 seconds
         logging.debug("checking if the car is on and the obd is connected")
@@ -24,11 +36,17 @@ def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensor
             logging.debug("read sensors")
             sensors_data = car.read_sensors(sensors)
             logging.debug("insert data into the db")
+
+            rpm = sensors_data[0]
+            speed = sensors_data[3]
+
+            estimated_gear = estimate_gear(speed, rpm, TIRE_RADIUS, GEAR_RATIOS)
+            sensors_data.append(estimated_gear)
             db.insert_data_sensors(sensors_data)
             logging.debug("send data to server")
-            send_wifi_db(router_addr, db, server_addr, server_db_path, server_user, led_green)
+            db.send_wifi_db()
             logging.debug("wait")
-            time.sleep(scanning_interval)
+            time.sleep(scanning_interval-1)
         else:
             # if the car is off but the obd is connected, disconnect the obd to let it sleep
             if obd_conn.is_connected():
@@ -51,24 +69,8 @@ def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensor
                     return
                 
         logging.debug("main loop waiting")
-        time.sleep(2)
+        time.sleep(1)
 
-def connected_to_wifi(addr: str):
-    try:
-        output = subprocess.run(["ping", "-c", "1", addr], capture_output=True)
-        if output.returncode == 0:
-            return True
-        return False
-    except Exception as e:
-        logging.error(f"Connection error: {e}")
-        return False
-
-def send_wifi_db(router_addr: str, db: DB, server_addr: str, server_db_path: str, server_user: str, led_green: Led):
-    if connected_to_wifi(router_addr):
-        led_green.turn_on()
-        db.send_db(server_addr, server_db_path, server_user)
-    else:
-        led_green.turn_off()
 
 def shutdown(switch_pin: int):
     # check switch status
@@ -103,13 +105,15 @@ def main():
     LED_RED = config["LED_RED"]
     LED_BLUE = config["LED_BLUE"]
     SWITCH = config["SWITCH"]
+    TIRE_RADIUS = config["TIRE_RADIUS"]
+    GEAR_RATIOS = config["GEAR_RATIOS"]
+    CALCULATED_VALUES = config["CALCULATED_VALUES"]
 
+    led_red = Led(LED_RED, "red", 0.5)
+    led_green = Led(LED_GREEN, "green", 1)
+    led_blue = Led(LED_BLUE, "blue", 0.15)
 
-    led_red = Led(LED_RED, "red")
-    led_green = Led(LED_GREEN, "green")
-    led_blue = Led(LED_BLUE, "blue")
-
-    db = DB(LOCAL_DB_PATH, SENSORS, led_green)
+    db = DB(LOCAL_DB_PATH, ROUTER_ADDR, SERVER_ADDR, SERVER_DB_PATH, SERVER_USER, SENSORS, CALCULATED_VALUES, led_green)
     obd_conn = OBD(MAC_ADDR, led_blue)
     car = Car(obd_conn, led_blue)
 
@@ -122,7 +126,7 @@ def main():
     global stop_event
     stop_event = threading.Event()
 
-    monitoring_thread = threading.Thread(target=monitoring, args=(car, obd_conn, db, SCANNING_INTERVAL, SENSORS, SERVER_ADDR, ROUTER_ADDR, SERVER_DB_PATH, SERVER_USER, led_blue, led_green))
+    monitoring_thread = threading.Thread(target=monitoring, args=(car, obd_conn, db, SCANNING_INTERVAL, SENSORS, led_blue, TIRE_RADIUS, GEAR_RATIOS))
     # shutdown_thread = threading.Thread(target=shutdown, args=(SWITCH,))
     
     switch = gpiozero.Button(SWITCH)
@@ -153,3 +157,5 @@ if __name__ == "__main__":
 # TODO:
 # - intensity of the leds
 # - db errors
+# - refactor sensors list and sensors_data list in a single dictionary
+# - refactor the estimate gear function and make it a method of a class

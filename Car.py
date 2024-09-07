@@ -9,7 +9,7 @@ class Car:
     def __init__(self, obd_connection: OBD, led_blue: Led):
         self.obd_connection = obd_connection
         self.led_blue = led_blue
-
+        
     def is_car_on(self):
         try:
             if self.obd_connection is not None and self.obd_connection.is_connected():
@@ -45,3 +45,5 @@ class Car:
                 sensor_data.append(None)
 
         return sensor_data
+
+    

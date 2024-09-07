@@ -4,14 +4,15 @@ import time
 
 import gpiozero
 class Led:
-    def __init__(self, pin: int, color: str):
+    def __init__(self, pin: int, color: str, intensity: float = 1):
         self.color = color
         self.led = gpiozero.PWMLED(pin)
         self.blinking = False
         self.thread = None
         self.lock = threading.Lock()  # Add a lock for thread-safety
+        self.default_intensity = intensity
 
-    def _blink(self):
+    def _blink(self, intensity: None):
          while True:
             with self.lock:
                 if not self.blinking:
@@ -19,7 +20,9 @@ class Led:
 
             # Blink the LED
             logging.info(f"LED {self.color} is ON")
-            self.led.on()
+            if intensity is None:
+                intensity = self.default_intensity
+            self.led.value = intensity
             time.sleep(self.blink_interval)
 
             logging.info(f"LED {self.color} is OFF")
@@ -40,7 +43,7 @@ class Led:
         self.thread = threading.Thread(target=self._blink)
         self.thread.start()
 
-    def stop_blinking(self):
+    def stop_blinking(self, intensity = None):
         with self.lock:
             if not self.blinking:
                 return  # Already stopped, do nothing
@@ -51,12 +54,16 @@ class Led:
             self.thread.join()
             self.thread = None
             if self.was_on:
-                self.led.on()
+                if intensity is None:
+                    intensity = self.default_intensity
+                self.led.value = intensity
             else:
                 self.led.off()
     
-    def turn_on(self, intensity: int = 1):
+    def turn_on(self, intensity = None):
         with self.lock:
+            if intensity is None:
+                intensity = self.default_intensity
             self.led.value = intensity
             logging.info(f"LED {self.color} turned ON with intensity {intensity}")
 
