@@ -18,6 +18,7 @@ stop_event = threading.Event()
 def estimate_gear(speed, rpm, tire_radius, gear_ratios):
     speed_m_s = speed * (1000 / 3600)
     # Calculate the gear ratio
+    # FIXME: 
     gear_ratio = (rpm * tire_radius * 2 * math.pi) / (speed_m_s * 60)
     
     # Find the closest matching gear ratio from known gear ratios
