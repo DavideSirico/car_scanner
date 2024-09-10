@@ -1,10 +1,10 @@
 
 # Car Scanner
-This project is made to collect, display and analyze information about your car. 
+This project is made to collect, display and analyze information about your car and visualize them in a grafana dashboard. 
 
 ## Requirements:
 - [OBD2 Scanner compatible with ELM327 Commands](https://www.amazon.it/dp/B071D8SYXN?ref=ppx_yo2ov_dt_b_fed_asin_title) - I suggest this scanner because is cheap enough but it's not a chinese copy of the real one.
-- [Raspberry pi zero 2w](https://www.amazon.it/dp/B09KLVX4RT?ref=ppx_yo2ov_dt_b_fed_asin_title) - Cheapest raspberry with wifi and bluetooth that draw little power
+- [Raspberry pi zero 2w](https://www.amazon.it/dp/B09KLVX4RT?ref=ppx_yo2ov_dt_b_fed_asin_title) - Cheapest raspberry with wifi and bluetooth that draws little power
 - [microSD]() - I reccomend an A1 card like this
 - [DC converter from 12/24V to 5V 3A] - (https://www.amazon.it/dp/B0CHJN3J2Y?ref=ppx_yo2ov_dt_b_fed_asin_title)
 - Switch/Button - A normal switch or button to power on or off the raspberry (u can configure if let always on or turn it on manually)
@@ -88,3 +88,6 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
 ## TODO:
  - temperature and humidity sensor
  - multicolor led
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTEyMTQ0NjMxMzZdfQ==
+-->
