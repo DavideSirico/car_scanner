@@ -18,7 +18,7 @@ TODO PHOTO
 To make sure you don't set the car on fire I used a fuse on the positive sign. 
 Next I connected the battery to the DC converter from 12/24V to 5V 3A. With this and a simple cable you can finally turn on the raspberry pi.
 
-
+To connect the Raspberry to the leds and the switch.
 
 ## Installation
 ### update and install the required packages 
@@ -95,6 +95,5 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
  - temperature and humidity sensor
  - multicolor led
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyMTQyNTU3MzksLTE3NTUzMjAwNjBdfQ
-==
+eyJoaXN0b3J5IjpbMTg2MjcwNDY3NSwtMTc1NTMyMDA2MF19
 -->
