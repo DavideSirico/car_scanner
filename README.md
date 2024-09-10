@@ -12,7 +12,9 @@ This project is made to collect, display and analyze information about your car 
 - other sensors (DHT11 for temperature, GPS, Accelerometer)
 
 ## Elettric circuit
-For the energy to power up the raspberry I recommend to use a 
+For the energy to power up the raspberry I recommend to get it directly from the battery like this:
+TODO PHOTO
+To make sure you don't set the car on fire 
 
 ## Installation
 ### update and install the required packages 
@@ -89,5 +91,5 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
  - temperature and humidity sensor
  - multicolor led
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU3Njg3NTM5OV19
+eyJoaXN0b3J5IjpbLTEzMDg4OTA5MzRdfQ==
 -->
