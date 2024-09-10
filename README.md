@@ -39,7 +39,7 @@ $ sudo apt install bluetoothd bluez git python3 screen
 ### activate the python env
 ```source .venv/bin/activate```
 ### install the required package
-python -m pip install -r requirements.txt
+```python -m pip install -r requirements.txt```
 
 ## Usage 
 Step 1 - Try to connect to OBD Adapater via Bluetooth manually
@@ -105,6 +105,6 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4MzAzMjI2NTcsMTg2MjcwNDY3NSwtMT
-c1NTMyMDA2MF19
+eyJoaXN0b3J5IjpbNzg2OTYwOTUzLDE4NjI3MDQ2NzUsLTE3NT
+UzMjAwNjBdfQ==
 -->
