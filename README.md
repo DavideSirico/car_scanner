@@ -75,19 +75,11 @@ If successfully connected to the car, 0100 will return something instead of "UNA
 
 ### make the 2 scripts running at startup
 create a systemlink for the service 
+```
 sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
-
+```
 
 ## program structure
-3 scripts:
-- The reader.py collects and save the data from the DHT11, GPS and from the OBD Scanner in an sqlite3 database. 
-- The sender.py checks if the raspberry is connected to wifi and sends the data to the server that i have at home the database through ssh.
-- The  ... is monitoring the switch to power on/off the raspberry.
-
-3 services:
-- TODO
-- TODO
-- TODO
 
 
 ## main features
@@ -102,9 +94,7 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
 ## TODO:
  - temperature and humidity sensor
  - multicolor led
-
-
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzg2OTYwOTUzLDE4NjI3MDQ2NzUsLTE3NT
-UzMjAwNjBdfQ==
+eyJoaXN0b3J5IjpbLTE2MDkxMDA4NDYsNzg2OTYwOTUzLDE4Nj
+I3MDQ2NzUsLTE3NTUzMjAwNjBdfQ==
 -->
