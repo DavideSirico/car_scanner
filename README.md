@@ -14,7 +14,7 @@ This project is made to collect, display and analyze information about your car 
 ## Elettric circuit
 For the energy to power up the raspberry I recommend to get it directly from the battery like this:
 TODO PHOTO
-To make sure you don't set the car on fire 
+To make sure you don't set the car on fire I used a fuse on the positive sign. 
 
 ## Installation
 ### update and install the required packages 
@@ -91,5 +91,5 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
  - temperature and humidity sensor
  - multicolor led
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzMDg4OTA5MzRdfQ==
+eyJoaXN0b3J5IjpbLTE3NTUzMjAwNjBdfQ==
 -->
