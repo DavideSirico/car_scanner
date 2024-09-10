@@ -19,13 +19,15 @@ To make sure you don't set the car on fire I used a fuse on the positive sign.
 Next I connected the battery to the DC converter from 12/24V to 5V 3A. With this and a simple cable you can finally turn on the raspberry pi.
 
 Connect the Raspberry to the leds and the switch.
-()
+(TODO PHOTO)
 
 
 ## Installation
 ### update and install the required packages 
-sudo apt update && sudo apt upgrade -y
-sudo apt install bluetoothd bluez git python3 screen
+
+    sudo apt update && sudo apt upgrade -y
+
+sudo apt install bluetoothd bluez git python3 screen 
 ### clone this repo
 git clone https://github.com/DavideSirico/car_scanner
 ### create a python virtual enviroment
@@ -96,7 +98,8 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
 ## TODO:
  - temperature and humidity sensor
  - multicolor led
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTA2NTcyNjE5NywxODYyNzA0Njc1LC0xNz
+eyJoaXN0b3J5IjpbLTU4Mjg0MTM1NywxODYyNzA0Njc1LC0xNz
 U1MzIwMDYwXX0=
 -->
