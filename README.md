@@ -25,19 +25,19 @@ Connect the Raspberry to the leds and the switch.
 ## Installation
 ### update and install the required packages 
 
-```
-$sudo apt update && sudo apt upgrade -y
+```bash
+$ sudo apt update && sudo apt upgrade -y
 ```
 ```bash
-sudo apt install bluetoothd bluez git python3 screen
+$ sudo apt install bluetoothd bluez git python3 screen
 ```
 
 ### clone this repo
-git clone https://github.com/DavideSirico/car_scanner
+`git clone https://github.com/DavideSirico/car_scanner`
 ### create a python virtual enviroment
-python3 -m venv .venv
+```python3 -m venv .venv```
 ### activate the python env
-source .venv/bin/activate
+```source .venv/bin/activate```
 ### install the required package
 python -m pip install -r requirements.txt
 
@@ -105,6 +105,6 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzU1NDczMzI1LDE4NjI3MDQ2NzUsLTE3NT
-UzMjAwNjBdfQ==
+eyJoaXN0b3J5IjpbLTE4MzAzMjI2NTcsMTg2MjcwNDY3NSwtMT
+c1NTMyMDA2MF19
 -->
