@@ -8,7 +8,7 @@ This project is made to collect, display and analyze information about your car 
 - [microSD]() - I reccomend an A1 card like this
 - [DC converter from 12/24V to 5V 3A] - (https://www.amazon.it/dp/B0CHJN3J2Y?ref=ppx_yo2ov_dt_b_fed_asin_title)
 - Switch/Button - A normal switch or button to power on or off the raspberry (u can configure if let always on or turn it on manually)
-- 3 leds
+- 3 leds - I recomment 3 different colors or 2 multicolor leds 
 - other sensors (DHT11 for temperature, GPS, Accelerometer)
 
 ## Elettric circuit
@@ -89,5 +89,5 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
  - temperature and humidity sensor
  - multicolor led
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyMTQ0NjMxMzZdfQ==
+eyJoaXN0b3J5IjpbNzUzNjYwNTQ5XX0=
 -->
