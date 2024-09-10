@@ -25,9 +25,13 @@ Connect the Raspberry to the leds and the switch.
 ## Installation
 ### update and install the required packages 
 
-    sudo apt update && sudo apt upgrade -y
+```
+$sudo apt update && sudo apt upgrade -y
+```
+```bash
+sudo apt install bluetoothd bluez git python3 screen
+```
 
-sudo apt install bluetoothd bluez git python3 screen 
 ### clone this repo
 git clone https://github.com/DavideSirico/car_scanner
 ### create a python virtual enviroment
@@ -99,7 +103,8 @@ sudo ln -s /home/david/car_scanner/car_scanner.service /etc/systemd/system/
  - temperature and humidity sensor
  - multicolor led
 
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU4Mjg0MTM1NywxODYyNzA0Njc1LC0xNz
-U1MzIwMDYwXX0=
+eyJoaXN0b3J5IjpbNzU1NDczMzI1LDE4NjI3MDQ2NzUsLTE3NT
+UzMjAwNjBdfQ==
 -->
