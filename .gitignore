@@ -1,3 +1,4 @@
 .venv
 obd_data.db
 __pycache__
+.vscode
