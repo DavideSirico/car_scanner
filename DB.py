@@ -44,8 +44,8 @@ class DB:
             self.led_green.start_blinking(0.5)
             logging.debug("sending database to server...")
             try:
-                print(self.server_properties)
-                output = subprocess.run(["scp", self.server_properties["DB_PATH"], f"{self.server_properties["SERVER_USER"]}@{self.server_properties["SERVER_ADDR"]}:{self.server_properties["SERVER_DB_PATH"]  }"], capture_output=True)
+                output = subprocess.run(["scp", self.server_properties["DB_PATH"], f"{self.server_properties['SERVER_USER']}@{self.server_properties['SERVER_ADDR']}:{self.server_properties['SERVER_DB_PATH']}"], capture_output=True)
+
                 if output.returncode != 0:
                     logging.error(f"Failed to send data: {output.stderr.decode('utf-8')}")
                     return
