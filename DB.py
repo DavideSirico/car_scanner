@@ -19,7 +19,7 @@ class DB:
 
         # Establish a connection to the SQLite database
         try:
-            self.connection = sqlite3.connect(self.server_properties["local_db_path"], check_same_thread=False)
+            self.connection = sqlite3.connect(self.server_properties["LOCAL_DB_PATH"], check_same_thread=False)
             c = self.connection.cursor()
 
             # Create the table with dynamic sensor columns
@@ -44,7 +44,8 @@ class DB:
             self.led_green.start_blinking(0.5)
             logging.debug("sending database to server...")
             try:
-                output = subprocess.run(["scp", self.server_properties["db_path"], f"{self.server_properties["server_user"]}@{self.server_properties["server_addr"]}:{self.server_properties["server_db_path"]  }"], capture_output=True)
+                print(self.server_properties)
+                output = subprocess.run(["scp", self.server_properties["DB_PATH"], f"{self.server_properties["SERVER_USER"]}@{self.server_properties["SERVER_ADDR"]}:{self.server_properties["SERVER_DB_PATH"]  }"], capture_output=True)
                 if output.returncode != 0:
                     logging.error(f"Failed to send data: {output.stderr.decode('utf-8')}")
                     return
@@ -55,7 +56,7 @@ class DB:
                 self.led_green.stop_blinking()
     def _connected_to_wifi(self):
         try:
-            output = subprocess.run(["ping", "-c", "1", self.server_properties["server_addr"]], capture_output=True)
+            output = subprocess.run(["ping", "-c", "1", self.server_properties["SERVER_ADDR"]], capture_output=True)
             if output.returncode == 0:
                 return True
             return False
