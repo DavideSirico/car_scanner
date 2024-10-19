@@ -102,7 +102,7 @@ def main():
     # setup logging
     # sys.stderr = open("stderr.log", "a")
     # sys.stdout = open("stdout.log", "a")
-    logging.basicConfig(stream=sys.stdout, format='%(levelname)s - %(asctime)s: %(message)s', level=logging.DEBUG)
+    logging.basicConfig(stream=sys.stdout, format='%(levelname)s - %(asctime)s: %(message)s', level=logging.DEBUG, force=True)
     
     # Load the configuration
     config = load_config('config.json')
