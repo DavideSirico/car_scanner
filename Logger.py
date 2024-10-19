@@ -5,19 +5,29 @@ class Logger:
     def __init__(self, level: int = logging.DEBUG):
         self.logger = logging.getLogger("car_scanner")
         self.logger.setLevel(level)
-        self.file_handler = logging.FileHandler("car_scanner.log")
-        self.file_handler.setLevel(level)
-        self.formatter = logging.Formatter(
-            "%(asctime)s - %(name)s: %(levelname)s - %(message)s"
-        )
-        self.file_handler.setFormatter(self.formatter)
-        self.logger.addHandler(self.file_handler)
-        self.logger.info("Logger initialized")
-        self.logger.debug("Debugging enabled")
-        self.logger.info("Info enabled")
-        self.logger.warning("Warning enabled")
-        self.logger.error("Error enabled")
-        self.logger.critical("Critical enabled")
+
+        if not self.logger.handlers:
+            # File handler
+            self.file_handler = logging.FileHandler("car_scanner.log")
+            self.file_handler.setLevel(level)
+            self.formatter = logging.Formatter(
+                "%(asctime)s - %(name)s: %(levelname)s - %(message)s"
+            )
+            self.file_handler.setFormatter(self.formatter)
+            self.logger.addHandler(self.file_handler)
+
+            # Stream handler (for terminal output)
+            self.stream_handler = logging.StreamHandler()
+            self.stream_handler.setLevel(level)
+            self.stream_handler.setFormatter(self.formatter)
+            self.logger.addHandler(self.stream_handler)
+
+            self.logger.info("Logger initialized")
+            self.logger.debug("Debugging enabled")
+            self.logger.info("Info enabled")
+            self.logger.warning("Warning enabled")
+            self.logger.error("Error enabled")
+            self.logger.critical("Critical enabled")
 
     def info(self, message):
         self.logger.info(message)
