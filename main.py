@@ -72,9 +72,6 @@ def monitoring(
             estimated_gear = estimate_gear(speed, rpm, TIRE_RADIUS, GEAR_RATIOS)
             sensors["gear"] = estimated_gear
             db.insert_data_sensors(sensors)
-            logger.debug("send data to server")
-
-            db.send_wifi_db()
             logger.debug("wait")
 
             time.sleep(scanning_interval - 1)
@@ -93,6 +90,9 @@ def monitoring(
 
                 time.sleep(15)
                 logger.debug("car is off and obd is disconnected")
+                
+                logger.debug("send data to server")
+                db.send_wifi_db()
 
                 led_blue.turn_off()
                 if not stop_event.is_set():
@@ -104,7 +104,6 @@ def monitoring(
 
                 else:
                     return
-
         logger.debug("main loop waiting")
 
         time.sleep(1)
