@@ -13,7 +13,7 @@ class Logger:
             self.file_handler = logging.FileHandler("car_scanner.log")
             self.file_handler.setLevel(level)
             self.formatter = logging.Formatter(
-                "%(asctime)s - %(name)s: %(levelname)s - %(message)s"
+                "%(asctime)s - %(name)s - %(filename)s: %(levelname)s - %(message)s"
             )
             self.file_handler.setFormatter(self.formatter)
             self.logger.addHandler(self.file_handler)

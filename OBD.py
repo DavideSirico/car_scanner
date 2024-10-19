@@ -53,7 +53,7 @@ class OBD:
             if output.returncode != 0 and output.stderr is not None:
                 logging.warning(f"bluetoothctl trust failed: {output.stderr}")
 
-            obd.logging.setLevel(obd.logging.DEBUG)
+            obd.logger.setLevel(obd.logging.DEBUG)
             logging.info("connecting with the obd class")
 
         except Exception as e:
