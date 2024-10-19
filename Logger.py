@@ -1,10 +1,12 @@
 import logging
 
-
 class Logger:
     def __init__(self, level: int = logging.DEBUG):
         self.logger = logging.getLogger("car_scanner")
         self.logger.setLevel(level)
+        
+        self.file_handler = None
+        self.stream_handler = None
 
         if not self.logger.handlers:
             # File handler
@@ -31,26 +33,32 @@ class Logger:
 
     def info(self, message):
         self.logger.info(message)
-        self.file_handler.flush()
+        if self.file_handler:
+            self.file_handler.flush()
 
     def debug(self, message):
         self.logger.debug(message)
-        self.file_handler.flush()
+        if self.file_handler:
+            self.file_handler.flush()
 
     def warning(self, message):
         self.logger.warning(message)
-        self.file_handler.flush()
+        if self.file_handler:
+            self.file_handler.flush()
 
     def error(self, message):
         self.logger.error(message)
-        self.file_handler.flush()
+        if self.file_handler:
+            self.file_handler.flush()
 
     def critical(self, message):
         self.logger.critical(message)
-        self.file_handler.flush()
+        if self.file_handler:
+            self.file_handler.flush()
 
     def close(self):
-        self.file_handler.close()
+        if self.file_handler:
+            self.file_handler.close()
         logging.shutdown()
         self.logger.info("Logger closed")
         self.logger.debug("Debugging disabled")
