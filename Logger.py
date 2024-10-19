@@ -24,6 +24,9 @@ class Logger:
             self.stream_handler.setFormatter(self.formatter)
             self.logger.addHandler(self.stream_handler)
 
+            self.logger.info("==========================================================================")
+            self.logger.info("START")
+
             self.logger.info("Logger initialized")
             self.logger.debug("Debugging enabled")
             self.logger.info("Info enabled")
@@ -66,3 +69,5 @@ class Logger:
         self.logger.warning("Warning disabled")
         self.logger.error("Error disabled")
         self.logger.critical("Critical disabled")
+        self.logger.info("END")
+        self.logger.info("==========================================================================")

@@ -64,7 +64,7 @@ class DB:
                 output = subprocess.run(
                     [
                         "scp",
-                        self.server_properties["DB_PATH"],
+                        self.server_properties["LOCAL_DB_PATH"],
                         f"{self.server_properties['SERVER_USER']}@{self.server_properties['SERVER_ADDR']}:{self.server_properties['SERVER_DB_PATH']}",
                     ],
                     capture_output=True,
