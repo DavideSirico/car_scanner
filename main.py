@@ -1,8 +1,7 @@
-import logging
+from logger_config import setup_logger
 import threading
 import time
 import subprocess 
-import sys
 import json 
 import math
 
@@ -13,6 +12,7 @@ from Led import Led
 
 import gpiozero
 
+logger, file_handler = setup_logger()
 stop_event = threading.Event()
 
 def estimate_gear(speed, rpm, tire_radius, gear_ratios):
@@ -44,13 +44,17 @@ def estimate_gear(speed, rpm, tire_radius, gear_ratios):
 def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensors: dict, led_blue: Led, TIRE_RADIUS: float, GEAR_RATIOS: list):
     while not stop_event.is_set():
         # check if the car is on and the obd is connected, start monitoring the sensors every 10 seconds
-        logging.debug("checking if the car is on and the obd is connected")
+        logger.debug("checking if the car is on and the obd is connected")
+        file_handler.flush()
         if car.is_car_on() and obd_conn.is_connected():
-            logging.debug("car is on and obd is connected")
+            logger.debug("car is on and obd is connected")
+            file_handler.flush()
             led_blue.turn_on()
-            logging.debug("read sensors")
+            logger.debug("read sensors")
+            file_handler.flush()
             sensors = car.read_sensors(sensors)
-            logging.debug("insert data into the db")
+            logger.debug("insert data into the db")
+            file_handler.flush()
 
             rpm = sensors["rpm"]
             speed = sensors["speed"]
@@ -58,32 +62,41 @@ def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensor
             estimated_gear = estimate_gear(speed, rpm, TIRE_RADIUS, GEAR_RATIOS)
             sensors["gear"] = estimated_gear
             db.insert_data_sensors(sensors)
-            logging.debug("send data to server")
+            logger.debug("send data to server")
+            file_handler.flush()
             db.send_wifi_db()
-            logging.debug("wait")
+            logger.debug("wait")
+            file_handler.flush()
             time.sleep(scanning_interval-1)
         else:
             # if the car is off but the obd is connected, disconnect the obd to let it sleep
             if obd_conn.is_connected():
-                logging.debug("car is off and obd is connected")
+                logger.debug("car is off and obd is connected")
+                file_handler.flush()
                 obd_conn.disconnect_obd()
                 obd_conn.disconnect_bluetooth()
-                logging.debug("obd is disconnected")
+                logger.debug("obd is disconnected")
+                file_handler.flush()
             # the the car is off and the obd is disconnected try every 5 minutes to reconnect
             while not obd_conn.is_connected() and not car.is_car_on():
-                logging.debug("waiting 15 seconds")
+                logger.debug("waiting 15 seconds")
+                file_handler.flush()
                 time.sleep(15)
-                logging.debug("car is off and obd is disconnected")
+                logger.debug("car is off and obd is disconnected")
+                file_handler.flush()
                 led_blue.turn_off()
                 if not stop_event.is_set():
-                    logging.debug("try to reconnect")
+                    logger.debug("try to reconnect")
+                    file_handler.flush()
                     obd_conn.connect_bluetooth()
                     obd_conn.connect_obd()
-                    logging.debug("obd is connected")
+                    logger.debug("obd is connected")
+                    file_handler.flush()
                 else:
                     return
                 
-        logging.debug("main loop waiting")
+        logger.debug("main loop waiting")
+        file_handler.flush()
         time.sleep(1)
 
 
@@ -99,11 +112,6 @@ def load_config(filename):
 
 
 def main():
-    # setup logging
-    # sys.stderr = open("stderr.log", "a")
-    # sys.stdout = open("stdout.log", "a")
-    logging.basicConfig(stream=sys.stdout, format='%(levelname)s - %(asctime)s: %(message)s', level=logging.DEBUG, force=True)
-    
     # Load the configuration
     config = load_config('config.json')
 
@@ -166,7 +174,8 @@ def main():
     led_green.turn_off()
     led_blue.turn_off()
 
-    logging.info("END OF PROGRAM")
+    logger.info("END OF PROGRAM")
+    file_handler.flush()
     subprocess.run(["shutdown", "-h", "now"])
 
 

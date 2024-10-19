@@ -1,8 +1,10 @@
-import logging
+from logger_config import setup_logger
 import threading
 import time
 
 import gpiozero
+
+logging, file_handler = setup_logger()
 class Led:
     def __init__(self, pin: int, color: str, intensity: float = 1):
         self.color = color
@@ -20,12 +22,14 @@ class Led:
 
             # Blink the LED
             logging.info(f"LED {self.color} is ON")
+            file_handler.flush()
             if intensity is None:
                 intensity = self.default_intensity
             self.led.value = intensity
             time.sleep(self.blink_interval)
 
             logging.info(f"LED {self.color} is OFF")
+            file_handler.flush()
             self.led.off()
             time.sleep(self.blink_interval)
 
@@ -66,8 +70,10 @@ class Led:
                 intensity = self.default_intensity
             self.led.value = intensity
             logging.info(f"LED {self.color} turned ON with intensity {intensity}")
+            file_handler.flush()
 
     def turn_off(self):
         with self.lock:
             self.led.off()
             logging.info(f"LED {self.color} turned OFF")
+            file_handler.flush()

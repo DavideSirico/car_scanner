@@ -1,10 +1,10 @@
 import subprocess
-import logging
-
+from logger_config import setup_logger
 from Led import Led
 
 import obd
 
+logging, file_handler = setup_logger()
 class OBD:
     def __init__(self, mac_address: str, led_blue: Led):
         self.mac_address = mac_address
@@ -20,45 +20,59 @@ class OBD:
             output = subprocess.run(cmd.split(), capture_output=True)
             if not (output.returncode == 0 or output.returncode == 1):
                 logging.error(f"{cmd} failed: {output.stderr.decode('utf-8')}, {output.stdout.decode('utf-8')},{output.returncode}")
+                file_handler.flush()
 
         self.obd_connection = None
 
     def connect_bluetooth(self):
         logging.info("Waiting for OBD-II connection...")
+        file_handler.flush()
         try:
             self.led_blue.start_blinking(0.5)
             logging.debug("connecting to obd scanner bluetooth...")
+            file_handler.flush()
 
             output = subprocess.run(["bluetoothctl", "connect", self.mac_address], capture_output=True)
             if output.returncode!= 0 and output.stderr is not None:
                 logging.warning(f"bluetoothctl connect failed: {output.stderr}")
+                file_handler.flush()
 
             logging.debug("pairing")
+            file_handler.flush()
             output = subprocess.run(["bluetoothctl", "pair", self.mac_address], capture_output=True)
             if output.returncode!= 0 and output.stderr is not None:
                 logging.warning(f"bluetoothctl pair failed: {output.stderr}")
+                file_handler.flush()
             
             logging.debug("trusting")
+            file_handler.flush()
             output = subprocess.run(["bluetoothctl", "trust", self.mac_address], capture_output=True)
             if output.returncode!= 0 and output.stderr is not None:
                 logging.warning(f"bluetoothctl trust failed: {output.stderr}")
+                file_handler.flush()
 
             obd.logger.setLevel(obd.logging.DEBUG)
+            file_handler.flush()
             logging.info("connecting with the obd class")
+            file_handler.flush()
 
         except Exception as e:
             logging.error(f"Connection error: {e}")
+            file_handler.flush()
         finally:
             self.led_blue.stop_blinking()
     
     def disconnect_bluetooth(self):
         try:
             logging.debug("disconnecting from obd scanner bluetooth...")
+            file_handler.flush()
             output = subprocess.run(["bluetoothctl", "disconnect", self.mac_address], capture_output=True)
             if output.returncode!= 0 and output.stderr is not None:
                 logging.warning(f"bluetoothctl disconnect failed: {output.stderr}")
+                file_handler.flush()
         except Exception as e:
             logging.error(f"Connection error: {e}")
+            file_handler.flush()
             return None
         finally:
             self.led_blue.turn_off()
@@ -67,9 +81,11 @@ class OBD:
         try:
             self.led_blue.start_blinking(0.5)
             logging.info("connecting with the obd class")
+            file_handler.flush()
             self.obd_connection = obd.OBD("/dev/rfcomm0")
         except Exception as e:
             logging.error(f"Connection error: {e}")
+            file_handler.flush()
         finally:
             self.led_blue.stop_blinking()
 
@@ -81,10 +97,12 @@ class OBD:
     def disconnect_obd(self):
         try:
             logging.info("disconnecting with the obd class")
+            file_handler.flush()
             if self.obd_connection is not None:
                 self.obd_connection.close()
         except Exception as e:
             logging.error(f"Connection error: {e}")
+            file_handler.flush()
         finally:
             self.led_blue.turn_off()
     
