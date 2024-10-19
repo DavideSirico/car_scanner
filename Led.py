@@ -1,10 +1,11 @@
-from logger_config import setup_logger
 import threading
 import time
-
+from Logger import Logger
 import gpiozero
 
-logging, file_handler = setup_logger()
+logging = Logger()
+
+
 class Led:
     def __init__(self, pin: int, color: str, intensity: float = 1):
         self.color = color
@@ -14,25 +15,24 @@ class Led:
         self.lock = threading.Lock()  # Add a lock for thread-safety
         self.default_intensity = intensity
 
-    def _blink(self, intensity = None):
-         while True:
+    def _blink(self, intensity=None):
+        while True:
             with self.lock:
                 if not self.blinking:
                     break  # Exit if blinking is stopped
 
             # Blink the LED
             logging.info(f"LED {self.color} is ON")
-            file_handler.flush()
+
             if intensity is None:
                 intensity = self.default_intensity
             self.led.value = intensity
             time.sleep(self.blink_interval)
 
             logging.info(f"LED {self.color} is OFF")
-            file_handler.flush()
+
             self.led.off()
             time.sleep(self.blink_interval)
-
 
     def start_blinking(self, blink_interval: float = 0.5):
         with self.lock:
@@ -40,14 +40,14 @@ class Led:
                 return  # Don't start a new thread if already blinking
             self.blinking = True
             self.blink_interval = blink_interval
-            
+
         # get current state of the LED
         self.was_on = self.led.is_lit
         # Start the blinking in a separate thread
         self.thread = threading.Thread(target=self._blink)
         self.thread.start()
 
-    def stop_blinking(self, intensity = None):
+    def stop_blinking(self, intensity=None):
         with self.lock:
             if not self.blinking:
                 return  # Already stopped, do nothing
@@ -63,17 +63,15 @@ class Led:
                 self.led.value = intensity
             else:
                 self.led.off()
-    
-    def turn_on(self, intensity = None):
+
+    def turn_on(self, intensity=None):
         with self.lock:
             if intensity is None:
                 intensity = self.default_intensity
             self.led.value = intensity
             logging.info(f"LED {self.color} turned ON with intensity {intensity}")
-            file_handler.flush()
 
     def turn_off(self):
         with self.lock:
             self.led.off()
             logging.info(f"LED {self.color} turned OFF")
-            file_handler.flush()
