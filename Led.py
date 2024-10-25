@@ -19,13 +19,13 @@ class Led:
                     break  # Exit if blinking is stopped
 
             # Blink the LED
-            logging.info(f"LED {self.color} is ON")
+            # logging.info(f"LED {self.color} is ON")
             if intensity is None:
                 intensity = self.default_intensity
             self.led.value = intensity
             time.sleep(self.blink_interval)
 
-            logging.info(f"LED {self.color} is OFF")
+            # logging.info(f"LED {self.color} is OFF")
             self.led.off()
             time.sleep(self.blink_interval)
 
@@ -65,9 +65,9 @@ class Led:
             if intensity is None:
                 intensity = self.default_intensity
             self.led.value = intensity
-            logging.info(f"LED {self.color} turned ON with intensity {intensity}")
+            # logging.info(f"LED {self.color} turned ON with intensity {intensity}")
 
     def turn_off(self):
         with self.lock:
             self.led.off()
-            logging.info(f"LED {self.color} turned OFF")
+            # logging.info(f"LED {self.color} turned OFF")

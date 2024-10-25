@@ -48,8 +48,9 @@ def monitoring(car: Car, obd_conn: OBD, db: DB, scanning_interval: float, sensor
             logging.debug("wait")
             time.sleep(scanning_interval-1)
         else:
+            time.sleep(5)
             # if the car is off but the obd is connected, disconnect the obd to let it sleep
-            if obd_conn.is_connected():
+            if obd_conn.is_connected() and not car.is_car_on():
                 logging.debug("car is off and obd is connected")
                 obd_conn.disconnect_obd()
                 obd_conn.disconnect_bluetooth()
