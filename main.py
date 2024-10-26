@@ -23,16 +23,15 @@ def estimate_gear(speed, rpm, tire_radius, gear_ratios):
         tire_radius = float(tire_radius)
         gear_ratios = [float(gr) for gr in gear_ratios]
     except ValueError:
-        raise ValueError(
-            "All inputs (speed, rpm, tire_radius, gear_ratios) must be numbers."
-        )
+        logger.error("All inputs (speed, rpm, tire_radius, gear_ratios) must be numbers.")
+        return None
 
     # Convert speed from km/h to m/s
     speed_m_s = speed * (1000.0 / 3600.0)
 
     # Avoid division by zero in case speed is zero
     if speed_m_s == 0:
-        raise ValueError("Speed cannot be zero.")
+        return 0
 
     # Calculate the gear ratio
     gear_ratio = (rpm * tire_radius * 2.0 * math.pi) / (speed_m_s * 60.0)
@@ -88,7 +87,7 @@ def monitoring(
             while not obd_conn.is_connected() and not car.is_car_on():
                 logger.debug("waiting 15 seconds")
 
-                time.sleep(15)
+                time.sleep(30)
                 logger.debug("car is off and obd is disconnected")
                 
                 logger.debug("send data to server")
@@ -113,6 +112,7 @@ def shutdown(switch_pin: int):
     # check switch status
     # switch = gpiozero.Button(switch_pin)
     # switch.wait_for_press()
+    logger.info("button pressed")
     stop_event.set()
 
 

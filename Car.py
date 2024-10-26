@@ -29,6 +29,7 @@ class Car:
             logger.error(f"An error occurred: {e}")
 
         self.led_blue.turn_off()
+        logger.info("Car is off or not connected")
         return False
 
     def read_sensor(self, sensor: str):
