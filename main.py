@@ -76,6 +76,11 @@ def monitoring(
             db.insert_data_sensors(sensors_values, calcolated_values)
             logger.debug("wait")
 
+            if not db._connected_to_wifi():
+                db.led_green.turn_off()
+            else:
+                db.led_green.turn_on()
+
             time.sleep(scanning_interval - 1)
         else:
             time.sleep(5)
