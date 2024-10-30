@@ -52,64 +52,60 @@ def monitoring(
     TIRE_RADIUS: float,
     GEAR_RATIOS: list,
 ):
-    try:
-        while not stop_event.is_set():
-            # check if the car is on and the obd is connected, start monitoring the sensors every 10 seconds
-            logger.debug("checking if the car is on and the obd is connected")
+    while not stop_event.is_set():
+        # check if the car is on and the obd is connected, start monitoring the sensors every 10 seconds
+        logger.debug("checking if the car is on and the obd is connected")
 
-            if car.is_car_on() and obd_conn.is_connected():
-                logger.debug("car is on and obd is connected")
+        if car.is_car_on() and obd_conn.is_connected():
+            logger.debug("car is on and obd is connected")
 
-                led_blue.turn_on()
-                logger.debug("read sensors")
+            led_blue.turn_on()
+            logger.debug("read sensors")
 
-                sensors = car.read_sensors(sensors)
-                logger.debug("insert data into the db")
+            sensors = car.read_sensors(sensors)
+            logger.debug("insert data into the db")
 
-                rpm = sensors["rpm"]
-                speed = sensors["speed"]
+            rpm = sensors["RPM"]
+            speed = sensors["SPEED"]
 
-                # estimated_gear = estimate_gear(speed, rpm, TIRE_RADIUS, GEAR_RATIOS)
-                # sensors["gear"] = estimated_gear
-                db.insert_data_sensors(sensors)
-                logger.debug("wait")
+            # estimated_gear = estimate_gear(speed, rpm, TIRE_RADIUS, GEAR_RATIOS)
+            # sensors["gear"] = estimated_gear
+            db.insert_data_sensors(sensors)
+            logger.debug("wait")
 
-                time.sleep(scanning_interval - 1)
-            else:
-                time.sleep(5)
-                # if the car is off but the obd is connected, disconnect the obd to let it sleep
-                if obd_conn.is_connected() and not car.is_car_on():
-                    logger.debug("car is off and obd is connected")
-                    obd_conn.disconnect_obd()
-                    obd_conn.disconnect_bluetooth()
-                    logger.debug("obd is disconnected")
+            time.sleep(scanning_interval - 1)
+        else:
+            time.sleep(5)
+            # if the car is off but the obd is connected, disconnect the obd to let it sleep
+            if obd_conn.is_connected() and not car.is_car_on():
+                logger.debug("car is off and obd is connected")
+                obd_conn.disconnect_obd()
+                obd_conn.disconnect_bluetooth()
+                logger.debug("obd is disconnected")
 
-                # the the car is off and the obd is disconnected try every 5 minutes to reconnect
-                while not obd_conn.is_connected() and not car.is_car_on():
-                    logger.debug("waiting 15 seconds")
+            # the the car is off and the obd is disconnected try every 5 minutes to reconnect
+            while not obd_conn.is_connected() and not car.is_car_on():
+                logger.debug("waiting 15 seconds")
 
-                    time.sleep(30)
-                    logger.debug("car is off and obd is disconnected")
-                    
-                    logger.debug("send data to server")
-                    db.send_wifi_db()
+                time.sleep(30)
+                logger.debug("car is off and obd is disconnected")
+                
+                logger.debug("send data to server")
+                db.send_wifi_db()
 
-                    led_blue.turn_off()
-                    if not stop_event.is_set():
-                        logger.debug("try to reconnect")
+                led_blue.turn_off()
+                if not stop_event.is_set():
+                    logger.debug("try to reconnect")
 
-                        obd_conn.connect_bluetooth()
-                        obd_conn.connect_obd()
-                        logger.debug("obd is connected")
+                    obd_conn.connect_bluetooth()
+                    obd_conn.connect_obd()
+                    logger.debug("obd is connected")
 
-                    else:
-                        return
-            logger.debug("main loop waiting")
+                else:
+                    return
+        logger.debug("main loop waiting")
 
-            time.sleep(1)
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        stop_event.set()
+        time.sleep(1)
 
 def shutdown(switch_pin: int):
     # check switch status
@@ -125,88 +121,81 @@ def load_config(filename):
 
 
 def main():
-    try:
-        # Load the configuration
-        config = load_config("config.json")
+    # Load the configuration
+    config = load_config("config.json")
 
-        # Access configuration values
-        SCANNING_INTERVAL = config["SCANNING_INTERVAL"]
-        SENSORS = config["SENSORS"]
-        MAC_ADDR = config["MAC_ADDR"]
+    # Access configuration values
+    SCANNING_INTERVAL = config["SCANNING_INTERVAL"]
+    SENSORS = config["SENSORS"]
+    MAC_ADDR = config["MAC_ADDR"]
 
-        server_properties = dict()
-        server_properties["SERVER_ADDR"] = config["SERVER_ADDR"]
-        server_properties["ROUTER_ADDR"] = config["ROUTER_ADDR"]
-        server_properties["SERVER_DB_PATH"] = config["SERVER_DB_PATH"]
-        server_properties["LOCAL_DB_PATH"] = config["LOCAL_DB_PATH"]
-        server_properties["SERVER_USER"] = config["SERVER_USER"]
+    server_properties = dict()
+    server_properties["SERVER_ADDR"] = config["SERVER_ADDR"]
+    server_properties["ROUTER_ADDR"] = config["ROUTER_ADDR"]
+    server_properties["SERVER_DB_PATH"] = config["SERVER_DB_PATH"]
+    server_properties["LOCAL_DB_PATH"] = config["LOCAL_DB_PATH"]
+    server_properties["SERVER_USER"] = config["SERVER_USER"]
 
-        LED_GREEN_PIN = config["LED_GREEN"]
-        LED_RED_PIN = config["LED_RED"]
-        LED_BLUE_PIN = config["LED_BLUE"]
-        SWITCH_PIN = config["SWITCH"]
-        TIRE_RADIUS = config["TIRE_RADIUS"]
-        GEAR_RATIOS = config["GEAR_RATIOS"]
-        CALCULATED_VALUES = config["CALCULATED_VALUES"]
+    LED_GREEN_PIN = config["LED_GREEN"]
+    LED_RED_PIN = config["LED_RED"]
+    LED_BLUE_PIN = config["LED_BLUE"]
+    SWITCH_PIN = config["SWITCH"]
+    TIRE_RADIUS = config["TIRE_RADIUS"]
+    GEAR_RATIOS = config["GEAR_RATIOS"]
+    CALCULATED_VALUES = config["CALCULATED_VALUES"]
 
-        sensors = dict.fromkeys(SENSORS, None)
+    sensors = dict.fromkeys(SENSORS, None)
 
-        # inizialize the leds
-        led_red = Led(LED_RED_PIN, "red", 0.5)
-        led_green = Led(LED_GREEN_PIN, "green", 1)
-        led_blue = Led(LED_BLUE_PIN, "blue", 0.15)
+    # inizialize the leds
+    led_red = Led(LED_RED_PIN, "red", 0.5)
+    led_green = Led(LED_GREEN_PIN, "green", 1)
+    led_blue = Led(LED_BLUE_PIN, "blue", 0.15)
 
-        # initialize the main objects
-        db = DB(server_properties, SENSORS, CALCULATED_VALUES, led_green)
-        obd_conn = OBD(MAC_ADDR, led_blue)
-        car = Car(obd_conn, led_blue)
+    # initialize the main objects
+    db = DB(server_properties, SENSORS, CALCULATED_VALUES, led_green)
+    obd_conn = OBD(MAC_ADDR, led_blue)
+    car = Car(obd_conn, led_blue)
 
-        global stop_event
-        stop_event = threading.Event()
+    global stop_event
+    stop_event = threading.Event()
 
-        monitoring_thread = threading.Thread(
-            target=monitoring,
-            args=(
-                car,
-                obd_conn,
-                db,
-                SCANNING_INTERVAL,
-                sensors,
-                led_blue,
-                TIRE_RADIUS,
-                GEAR_RATIOS,
-            ),
-        )
-        # shutdown_thread = threading.Thread(target=shutdown, args=(SWITCH,))
+    monitoring_thread = threading.Thread(
+        target=monitoring,
+        args=(
+            car,
+            obd_conn,
+            db,
+            SCANNING_INTERVAL,
+            sensors,
+            led_blue,
+            TIRE_RADIUS,
+            GEAR_RATIOS,
+        ),
+    )
+    # shutdown_thread = threading.Thread(target=shutdown, args=(SWITCH,))
 
-        switch = gpiozero.Button(SWITCH_PIN)
-        switch.when_released = shutdown
-        monitoring_thread.start()
-        # shutdown_thread.start()
+    switch = gpiozero.Button(SWITCH_PIN)
+    switch.when_released = shutdown
+    monitoring_thread.start()
+    # shutdown_thread.start()
 
-        led_red.turn_on()
+    led_red.turn_on()
 
-        monitoring_thread.join()
-        # shutdown_thread.join()
+    monitoring_thread.join()
+    # shutdown_thread.join()
 
-        db.connection.close()
-        obd_conn.disconnect_obd()
-        obd_conn.disconnect_bluetooth()
-        led_red.turn_off()
-        led_green.turn_off()
-        led_blue.turn_off()
+    db.connection.close()
+    obd_conn.disconnect_obd()
+    obd_conn.disconnect_bluetooth()
+    led_red.turn_off()
+    led_green.turn_off()
+    led_blue.turn_off()
 
-        logger.info("END OF PROGRAM")
-        subprocess.run(["shutdown", "-h", "now"])
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        stop_event.set()
+    logger.info("END OF PROGRAM")
+    subprocess.run(["shutdown", "-h", "now"])
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
+    main()
 
 
 # TODO:
