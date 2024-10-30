@@ -18,7 +18,7 @@ class Car:
             if self.obd_connection is not None and self.obd_connection.is_connected():
                 logger.info("checking if the car is responding...")
                 response = self.obd_connection.query(obd.commands.RPM)
-                if response is not None and response.value is not None or response.value.magnitude != 0:
+                if response is not None and response.value is not None and response.value.magnitude != 0:
                     self.led_blue.turn_on()
                     logger.debug(str(response.value.magnitude))
                     logger.debug("Car is on and connected")
