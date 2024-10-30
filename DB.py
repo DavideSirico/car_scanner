@@ -95,7 +95,6 @@ class DB:
             return False
         except Exception as e:
             logging.error(f"Connection error: {e}")
-
             return False
 
     def send_wifi_db(self):
