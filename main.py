@@ -170,7 +170,7 @@ def main():
             db,
             SCANNING_INTERVAL,
             SENSORS,
-            CALCOLATED_VALUES,
+            CALCULATED_VALUES,
             sensors_values,
             led_blue,
             TIRE_RADIUS,
