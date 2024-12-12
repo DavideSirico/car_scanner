@@ -81,7 +81,7 @@ def monitoring(
             else:
                 db.led_green.turn_on()
 
-            time.sleep(scanning_interval - 1)
+            time.sleep(scanning_interval)
         else:
             time.sleep(5)
             # if the car is off but the obd is connected, disconnect the obd to let it sleep
@@ -93,9 +93,9 @@ def monitoring(
 
             # the the car is off and the obd is disconnected try every 5 minutes to reconnect
             while not obd_conn.is_connected() and not car.is_car_on():
-                logger.debug("waiting 15 seconds")
+                logger.debug("waiting 300 seconds")
 
-                time.sleep(30)
+                time.sleep(300)
                 logger.debug("car is off and obd is disconnected")
                 
                 logger.debug("send data to server")
@@ -112,9 +112,6 @@ def monitoring(
                 else:
                     return
         logger.debug("main loop waiting")
-
-        time.sleep(1)
-
 def shutdown(switch_pin: int):
     # check switch status
     # switch = gpiozero.Button(switch_pin)
@@ -139,7 +136,6 @@ def main():
 
     server_properties = dict()
     server_properties["SERVER_ADDR"] = config["SERVER_ADDR"]
-    server_properties["ROUTER_ADDR"] = config["ROUTER_ADDR"]
     server_properties["SERVER_DB_PATH"] = config["SERVER_DB_PATH"]
     server_properties["LOCAL_DB_PATH"] = config["LOCAL_DB_PATH"]
     server_properties["SERVER_USER"] = config["SERVER_USER"]

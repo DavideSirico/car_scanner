@@ -1,10 +1,9 @@
 {
-    "SCANNING_INTERVAL": 3, 
+    "SCANNING_INTERVAL": 1, 
     "SENSORS": ["RPM", "ENGINE_LOAD", "COOLANT_TEMP", "SPEED", "INTAKE_TEMP", "MAF"],
     "CALCULATED_VALUES": ["GEAR", "FUEL_CONSUMPTION_L_100KM", "FUEL_CONSUMPTION_INSTANT"],
     "MAC_ADDR": "13:E0:2F:8D:54:A9",
     "SERVER_ADDR": "192.168.1.100",
-    "ROUTER_ADDR": "192.168.1.128",
     "SERVER_DB_PATH": "/home/david/car_scanner",
     "LOCAL_DB_PATH": "/home/david/car_scanner/obd_data.db",
     "SERVER_USER": "david",
