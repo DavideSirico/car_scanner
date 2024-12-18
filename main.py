@@ -47,7 +47,6 @@ def monitoring(
     obd_conn: OBD,
     db: DB,
     scanning_interval: float,
-    SENSORS: dict,
     CALCOLATED_VALUES: dict,
     sensors_values: dict,
     led_blue: Led,
@@ -67,8 +66,8 @@ def monitoring(
             sensors_values = car.read_sensors(sensors_values)
             logger.debug("insert data into the db")
 
-            rpm = sensors_values["RPM"]
-            speed = sensors_values["SPEED"]
+            # rpm = sensors_values["RPM"]
+            # speed = sensors_values["SPEED"]
 
             # estimated_gear = estimate_gear(speed, rpm, TIRE_RADIUS, GEAR_RATIOS)
             calcolated_values = dict()
@@ -170,7 +169,6 @@ def main():
             obd_conn,
             db,
             SCANNING_INTERVAL,
-            SENSORS,
             CALCULATED_VALUES,
             sensors_values,
             led_blue,

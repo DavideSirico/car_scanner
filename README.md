@@ -4,11 +4,12 @@
 This project is made to collect, display and analyze information about your car and visualize them in a grafana dashboard.
 In particular the project aims to provide a solution for reading and monitoring OBD-II (On-Board Diagnostics) data from a vehicle, log the data in a local SQLite database, and periodically send it to a remote server. The system also uses LED indicators to provide feedback on the vehicle's connection status and operations. The software is designed to run as a systemd service on a Linux-based environment. 
 
+TODO PHOTO
 ### Key Features:
 - OBD-II data collection and logging
 - LED feedback system (Blue, Red, Green)
 - SQLite database to store sensor data
-- Remote server data upload via SCP
+- Remote server data upload via rsync
 - Gear estimation from RPM and speed
 - Automatic reconnection to OBD and Bluetooth
 - Graceful shutdown using a physical switch
@@ -20,8 +21,8 @@ In particular the project aims to provide a solution for reading and monitoring 
 - [OBD2 Scanner compatible with ELM327 Commands](https://www.amazon.it/dp/B071D8SYXN?ref=ppx_yo2ov_dt_b_fed_asin_title) - I suggest this scanner because is cheap enough but it's not a chinese copy of real ones.
 - [Raspberry pi zero 2w](https://www.amazon.it/dp/B09KLVX4RT?ref=ppx_yo2ov_dt_b_fed_asin_title) - Cheapest raspberry with wifi and bluetooth that draws little power
 - [microSD](https://www.amazon.it/SanDisk-microSDXC-adattatore-prestazioni-dellapp/dp/B0B7NXBM6P) - I reccomend an A1 card like this
-- [DC converter from 12/24V to 5V 3A] - (https://www.amazon.it/dp/B0CHJN3J2Y?ref=ppx_yo2ov_dt_b_fed_asin_title)
-- USB-A to micro-USB
+- [DC converter from 12/24V to 5V 3A](https://www.amazon.it/dp/B0CHJN3J2Y?ref=ppx_yo2ov_dt_b_fed_asin_title) - To power up the raspberry directly from the car battery
+- USB-A to micro-USB cable
 - Switch/Button - A normal switch or button to power on or off the raspberry
 - 3 leds - I recomment 3 different colors or 2 multicolor leds.
 - other sensors (DHT11 for temperature, GPS, Accelerometer, etc). 
@@ -69,7 +70,7 @@ The Python dependencies for the project, including OBD-II libraries, GPIO contro
 
 ### 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/car_scanner.git
+git clone https://github.com/DavideSirico/car_scanner.git
 cd car_scanner
 ```
 
@@ -145,6 +146,6 @@ To make sure you don't set the car on fire I used a fuse on the positive sign.
 Next I connected the battery to the DC converter from 12/24V to 5V 3A. With this and a simple cable you can finally turn on the raspberry pi.
 
 Connect the Raspberry to the leds and the switch.
-(TODO PHOTO)
+TODO PHOTO
 
 This project is still in progress, and contributions or suggestions are welcome.
