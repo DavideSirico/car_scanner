@@ -59,37 +59,19 @@ class DB:
         with self.lock:
             self.led_green.start_blinking(0.5)
             logging.debug("sending database to server...")
-
-            backup_path = self.server_properties["LOCAL_DB_PATH"] + ".bk"
+            # Transfer the backup to the server
+            rsync_command = [
+                "rsync",
+                "-avz",  # Archive mode, verbose, compressed
+                "--partial",  # Allow partial transfers for resumability
+                self.server_properties["LOCAL_DB_PATH"],
+                f"{self.server_properties['SERVER_USER']}@{self.server_properties['SERVER_ADDR']}:{self.server_properties['SERVER_DB_PATH']}",
+            ]
             try:
-                # Backup the database
-                with sqlite3.connect(self.server_properties["LOCAL_DB_PATH"]) as conn:
-                    with open(backup_path, 'wb') as backup_file:
-                        for line in conn.iterdump():
-                            backup_file.write(f"{line}\n".encode('utf-8'))
-                logging.info(f"Database backup created at {backup_path}")
-                rsync_command = [
-                    "rsync",
-                    "-avz",  # Archive mode, verbose, compressed
-                    "--partial",  # Allow partial transfers for resumability
-                    backup_path,
-                    f"{self.server_properties['SERVER_USER']}@{self.server_properties['SERVER_ADDR']}:{self.server_properties['SERVER_DB_PATH']}",
-                ]
-                try:
-                    subprocess.run(rsync_command, check=True)
-                    logging.info(f"Database file {backup_path} transferred successfully")
-                    logging.info("Database sent successfully.")
-                except subprocess.CalledProcessError as e:
-                    logging.error(f"Rsync transfer failed: {e}")
-            except Exception as e:
-                logging.error(f"Failed to create database backup: {e}")
-                return False
-            finally:
-                # Clean up the backup file
-                if os.path.exists(backup_path):
-                    os.remove(backup_path)
-            
-                self.led_green.stop_blinking()
+                subprocess.run(rsync_command, check=True)
+            except subprocess.CalledProcessError as e:
+                logging.error(f"Rsync transfer failed: {e}")
+            self.led_green.stop_blinking()
 
     def _connected_to_wifi(self):
         try:
