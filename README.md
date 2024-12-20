@@ -97,7 +97,7 @@ journalctl -u car_scanner.service
 ```
 
 
-## Usage 
+## Check OBD-II Connection 
 Step 1 - Try to connect to OBD Adapater via Bluetooth manually
 ```
 bluetoothctl
@@ -125,6 +125,7 @@ atsp0 <-- use protocol auto, available protocols: 1, 2, 3, 4, 5, 6, 7, 8, 9, A
 ```
 If successfully connected to the car, 0100 will return something instead of "UNABLE TO CONNECT" or "CAN ERROR" or "BUS INIT: ...ERROR".
 
+## Usage
 Once installed and running, the system will automatically start collecting OBD-II data when the car is turned on. Data will be saved locally and transmitted to the remote server periodically. LEDs will provide status feedback:
 - **Blue LED**: Indicates OBD-II connection status.
 - **Green LED**: Blinks during data transmission.
@@ -134,9 +135,9 @@ Once installed and running, the system will automatically start collecting OBD-I
 A physical switch connected to a GPIO pin (specified in `config.json`) allows the system to gracefully shut down when released.
 
 ## To-Do List
-- Improve LED intensity control
-- Handle database errors more gracefully
-- Refactor the gear estimation function into a class method
+- [ ] Improve LED intensity control
+- [ ] Handle database errors more gracefully
+- [ ] Refactor the gear estimation function into a class method
 
 ## Elettric circuit
 For the energy to power up the raspberry I recommend to get it directly from the battery.
