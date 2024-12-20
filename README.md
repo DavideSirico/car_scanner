@@ -4,7 +4,6 @@
 This project is made to collect, display and analyze information about your car and visualize them in a grafana dashboard.
 In particular the project aims to provide a solution for reading and monitoring OBD-II (On-Board Diagnostics) data from a vehicle, log the data in a local SQLite database, and periodically send it to a remote server. The system also uses LED indicators to provide feedback on the vehicle's connection status and operations. The software is designed to run as a systemd service on a Linux-based environment. 
 
-TODO PHOTO
 ### Key Features:
 - OBD-II data collection and logging
 - LED feedback system (Blue, Red, Green)
@@ -140,12 +139,10 @@ A physical switch connected to a GPIO pin (specified in `config.json`) allows th
 - Refactor the gear estimation function into a class method
 
 ## Elettric circuit
-For the energy to power up the raspberry I recommend to get it directly from the battery like this:
-TODO PHOTO
+For the energy to power up the raspberry I recommend to get it directly from the battery.
 To make sure you don't set the car on fire I used a fuse on the positive sign. 
 Next I connected the battery to the DC converter from 12/24V to 5V 3A. With this and a simple cable you can finally turn on the raspberry pi.
-
 Connect the Raspberry to the leds and the switch.
-TODO PHOTO
-
+The leds are connected to the GPIO pins of the raspberry pi.
+The switch is connected to the GPIO pin and to the ground.
 This project is still in progress, and contributions or suggestions are welcome.
