@@ -3,55 +3,27 @@ import time
 import subprocess
 import json
 import math
+import gpiozero
 
 from Car import Car
 from OBD import OBD
 from DB import DB
 from Led import Led
+from CalculatedValues import CalculatedValues
 from Logger import Logger
-import gpiozero
+
 
 logger = Logger()
 stop_event = threading.Event()
-
-
-def estimate_gear(speed, rpm, tire_radius, gear_ratios):
-    # Ensure that inputs are in the correct data type
-    try:
-        speed = float(speed)
-        rpm = float(rpm)
-        tire_radius = float(tire_radius)
-        gear_ratios = [float(gr) for gr in gear_ratios]
-    except ValueError:
-        logger.error("All inputs (speed, rpm, tire_radius, gear_ratios) must be numbers.")
-        return None
-
-    # Convert speed from km/h to m/s
-    speed_m_s = speed * (1000.0 / 3600.0)
-
-    # Avoid division by zero in case speed is zero
-    if speed_m_s == 0:
-        return 0
-
-    # Calculate the gear ratio
-    gear_ratio = (rpm * tire_radius * 2.0 * math.pi) / (speed_m_s * 60.0)
-
-    # Find the closest matching gear ratio from known gear ratios
-    closest_gear = min(gear_ratios, key=lambda x: abs(x - gear_ratio))
-
-    return gear_ratios.index(closest_gear) + 1  # Return the gear number
-
 
 def monitoring(
     car: Car,
     obd_conn: OBD,
     db: DB,
     scanning_interval: float,
-    CALCOLATED_VALUES: dict,
+    calculatedValues: CalculatedValues,
     sensors_values: dict,
-    led_blue: Led,
-    TIRE_RADIUS: float,
-    GEAR_RATIOS: list,
+    led_blue: Led
 ):
     while not stop_event.is_set():
         # check if the car is on and the obd is connected, start monitoring the sensors every 10 seconds
@@ -65,14 +37,16 @@ def monitoring(
 
             sensors_values = car.read_sensors(sensors_values)
             logger.debug("insert data into the db")
+            
+            maf = sensors_values["MAF"]
+            speed = sensors_values["SPEED"]
+            rpm = sensors_values["RPM"]
+            calculated_values = calculatedValues.calculate_values(maf,speed,rpm)
+            for calculated_value in calculated_values:
+                logger.debug(f"{calculated_value}: {calculated_values[calculated_value]}")
 
-            # rpm = sensors_values["RPM"]
-            # speed = sensors_values["SPEED"]
-
-            # estimated_gear = estimate_gear(speed, rpm, TIRE_RADIUS, GEAR_RATIOS)
-            calcolated_values = dict()
-            # calcolated_values["GEAR"] = estimated_gear
-            db.insert_data_sensors(sensors_values, calcolated_values)
+            
+            db.insert_data_sensors(sensors_values, calculated_values)
             logger.debug("wait")
 
             if not db._connected_to_wifi():
@@ -143,10 +117,8 @@ def main():
     LED_RED_PIN = config["LED_RED"]
     LED_BLUE_PIN = config["LED_BLUE"]
     SWITCH_PIN = config["SWITCH"]
-    TIRE_RADIUS = config["TIRE_RADIUS"]
-    GEAR_RATIOS = config["GEAR_RATIOS"]
     CALCULATED_VALUES = config["CALCULATED_VALUES"]
-
+    CAR_PROPERTIES = config["CAR_PROPERTIES"]
     sensors_values = dict.fromkeys(SENSORS, None)
 
     # inizialize the leds
@@ -155,6 +127,7 @@ def main():
     led_blue = Led(LED_BLUE_PIN, "blue", 0.15)
 
     # initialize the main objects
+    calculatedValues = CalculatedValues(CALCULATED_VALUES, CAR_PROPERTIES)
     db = DB(server_properties, SENSORS, CALCULATED_VALUES, led_green)
     obd_conn = OBD(MAC_ADDR, led_blue)
     car = Car(obd_conn, led_blue)
@@ -169,11 +142,9 @@ def main():
             obd_conn,
             db,
             SCANNING_INTERVAL,
-            CALCULATED_VALUES,
+            calculatedValues,
             sensors_values,
-            led_blue,
-            TIRE_RADIUS,
-            GEAR_RATIOS,
+            led_blue
         ),
     )
     # shutdown_thread = threading.Thread(target=shutdown, args=(SWITCH,))
