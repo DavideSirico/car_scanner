@@ -13,8 +13,8 @@ class DB:
     def __init__(
         self,
         server_properties: dict,
-        sensors: dict,
-        calculated_values: dict,
+        sensors: list,
+        calculated_values: list,
         led_green: Led,
     ):
         logging.info("Connecting to the SQL database...")
@@ -42,7 +42,7 @@ class DB:
             create_table_query = f"""
                 CREATE TABLE IF NOT EXISTS obd_data (
                     timestamp DATE DEFAULT (datetime('now', 'localtime')),
-                    {sensor_columns}
+                    {sensor_columns},
                     {calculated_values_columns}
                 )
             """

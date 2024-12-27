@@ -171,10 +171,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# TODO:
-# - intensity of the leds
-# - db errors
-# - refactor sensors list and sensors_data list in a single dictionary
-# - refactor the estimate gear function and make it a method of a class
