@@ -11,7 +11,7 @@
     "LED_RED": 16,
     "LED_BLUE": 6,
     "SWITCH": 3,
-    "CAR_PRORERTIES": {
+    "CAR_PROPERTIES": {
         "WEIGHT": 1417,
         "GEAR_RATIOS": [3.45, 1.87, 1.15, 0.82, 0.66],
         "TIRE_RADIUS": 7.5

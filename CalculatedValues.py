@@ -4,9 +4,9 @@ logger = Logger()
 
 
 class CalculatedValues:
-    def __init__(self, calculated_values: list, car_proprties: dict):
+    def __init__(self, calculated_values: list, car_properties: dict):
         self.calculated_values = calculated_values
-        self.car_proprties = car_proprties
+        self.car_properties = car_properties
         #This is typically assumed to be 14.7:1 for gasoline engines (stoichiometric ratio). 
         self.AFR = 14.7
         # The density of gasoline is roughly 0.74 kg/L.
@@ -63,8 +63,8 @@ class CalculatedValues:
         try:
             speed = float(speed)
             rpm = float(rpm)
-            tire_radius = float(self.car_proprties["tire_radius"])
-            gear_ratios = self.car_proprties["gear_ratios"]
+            tire_radius = float(self.car_properties["tire_radius"])
+            gear_ratios = self.car_properties["gear_ratios"]
         except ValueError:
             logger.error("All inputs (speed, rpm, tire_radius, gear_ratios) must be numbers.")
             return None
