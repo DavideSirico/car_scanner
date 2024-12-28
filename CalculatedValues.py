@@ -24,10 +24,21 @@ class CalculatedValues:
             return None
         
         # return a dictionary with the calculated values in the calculated_values list in a dynamic way
-        return {
-            key: func(maf, speed, rpm)
-            for key, func in self.calculated_values.items()
-        }
+        # calculated_values = ["FUEL_CONSUMPTION_INSTANT", "FUEL_CONSUMPTION_L_100KM", "GEAR"]
+        results = {}
+
+        for calculated_value in self.calculated_values:
+            if calculated_value == "FUEL_CONSUMPTION_INSTANT":
+                results[calculated_value] = self.fuel_consumption_instant(maf)
+            elif calculated_value == "FUEL_CONSUMPTION_L_100KM":
+                results[calculated_value] = self.fuel_consumption_l_100km(maf, speed)
+            elif calculated_value == "GEAR":
+                results[calculated_value] = self.estimate_gear(speed, rpm)
+            else:
+                logger.error(f"Unknown calculated value: {calculated_value}")
+                results[calculated_value] = None
+
+        return results
     
 
     def fuel_consumption_instant(self, maf):
