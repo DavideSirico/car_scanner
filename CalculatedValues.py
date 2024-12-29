@@ -74,8 +74,8 @@ class CalculatedValues:
         try:
             speed = float(speed)
             rpm = float(rpm)
-            tire_radius = float(self.car_properties["tire_radius"])
-            gear_ratios = self.car_properties["gear_ratios"]
+            tire_radius = float(self.car_properties["TIRE_RADIUS"])
+            gear_ratios = self.car_properties["GEAR_RATIOS"]
         except ValueError:
             logger.error("All inputs (speed, rpm, tire_radius, gear_ratios) must be numbers.")
             return None
