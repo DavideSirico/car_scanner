@@ -16,8 +16,14 @@ class CalculatedValues:
     def calculate_values(self, maf, speed, rpm):
         # Ensure that inputs are in the correct data type
         try:
+            if maf is None:
+                maf = 0
             maf = float(maf)
+            if speed is None:
+                speed = 0
             speed = float(speed)
+            if rpm is None:
+                rpm = 0
             rpm = float(rpm)
         except ValueError:
             logger.error("All inputs (maf, speed, rpm) must be numbers.")
